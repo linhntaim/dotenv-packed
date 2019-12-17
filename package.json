@@ -1,8 +1,8 @@
 {
     "name": "dotenv-packed",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "description": "Pack dotenv and some of its extensions into one.",
-    "main": "dist/main.js",
+    "main": "dist/index.js",
     "scripts": {
         "build": "babel src --out-dir ./dist --delete-dir-on-start --minified --source-maps",
         "test": "nyc mocha --require @babel/register",
@@ -32,7 +32,7 @@
     "homepage": "https://github.com/linhntaim/dotenv-packed#readme",
     "dependencies": {
         "dotenv": "^8.2.0",
-        "dotenv-conversion": "^1.4.1",
+        "dotenv-conversion": "^1.5.0",
         "dotenv-expand": "^5.1.0"
     },
     "devDependencies": {

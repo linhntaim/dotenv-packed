@@ -1,4 +1,4 @@
-import {install, env, getenv} from '../src/main'
+import {parseEnv, getEnv} from '../src'
 import mocha from 'mocha'
 import chai from 'chai'
 
@@ -8,7 +8,7 @@ chai.should()
 
 describe('dotenv-packed', function () {
     describe('unit tests', function () {
-        it('install', function (done) {
+        it('parse env', function (done) {
             const input = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -19,17 +19,16 @@ describe('dotenv-packed', function () {
             }
 
             Object.assign(process.env, input)
-            install()
+            parseEnv()
 
-            env().should.deep.include(expected)
-            getenv().should.deep.include(expected)
-            getenv('VARIABLE_1').should.deep.equal(expected.VARIABLE_1)
-            getenv('VARIABLE_2').should.deep.equal(expected.VARIABLE_2)
+            getEnv().should.deep.include(expected)
+            getEnv('VARIABLE_1').should.deep.equal(expected.VARIABLE_1)
+            getEnv('VARIABLE_2').should.deep.equal(expected.VARIABLE_2)
 
             done()
         })
 
-        it('install 2', function (done) {
+        it('parse env 2', function (done) {
             const input = {
                 VARIABLE_3: 'variable 3',
                 VARIABLE_4: 'variable 4',
@@ -40,8 +39,9 @@ describe('dotenv-packed', function () {
             }
 
             Object.assign(process.env, input)
-            install({
-                dotenvConversionConfig: {
+            parseEnv({
+                dotenvConfigOptions: {},
+                dotenvConversionConfigOptions: {
                     specs: {
                         VARIABLE_3(value) {
                             return value.toUpperCase()
@@ -50,10 +50,9 @@ describe('dotenv-packed', function () {
                 },
             })
 
-            env().should.deep.include(expected)
-            getenv().should.deep.include(expected)
-            getenv('VARIABLE_3').should.deep.equal(expected.VARIABLE_3)
-            getenv('VARIABLE_4').should.deep.equal(expected.VARIABLE_4)
+            getEnv().should.deep.include(expected)
+            getEnv('VARIABLE_3').should.deep.equal(expected.VARIABLE_3)
+            getEnv('VARIABLE_4').should.deep.equal(expected.VARIABLE_4)
 
             done()
         })

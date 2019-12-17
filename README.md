@@ -21,7 +21,7 @@ npm install dotenv-packed
 DEBUG=false
 ```
 
-```smartyconfig
+```shell script
 # .env file
 
 VARIABLE_1=value_1
@@ -31,30 +31,32 @@ VARIABLE_2=yes
 ```javascript
 // .js file
 
-import {install, env, getenv} from 'dotenv-packed'
+import {parseEnv, getEnv} from 'dotenv-packed'
 
-// ** Basic: parsing, expanding, conversing variables
-const {parsed} = install()
+// ** Basic
+const {parsed} = parseEnv() // parse, expand, convert variables
+const env = getEnv()
 
-console.log(parsed) // output: (object) { ... , VARIABLE_1: 'value_1', VARIABLE_2: true, ... }  
-console.log(process.env) // output: (object) { ... , DEBUG: 'false', VARIABLE_1: 'value_1', VARIABLE_2: 'true', ... }
-console.log(env()) // output: (object) { ... , DEBUG: false, VARIABLE_1: 'value_1', VARIABLE_2: true, ... } 
+console.log(parsed) // (object) { ... , VARIABLE_1: 'value_1', VARIABLE_2: true, ... }  
+console.log(process.env) // (object) { ... , DEBUG: 'false', VARIABLE_1: 'value_1', VARIABLE_2: 'true', ... }
+console.log(env) // (object) { ... , DEBUG: false, VARIABLE_1: 'value_1', VARIABLE_2: true, ... } 
 
-console.log(process.env.DEBUG) // output: (string) 'false'
-console.log(process.env.VARIABLE_1) // output: (string) 'value_1'
-console.log(process.env.VARIABLE_2) // output: (string) 'true'
+console.log(process.env.DEBUG) // (string) 'false'
+console.log(process.env.VARIABLE_1) // (string) 'value_1'
+console.log(process.env.VARIABLE_2) // (string) 'true'
 
-console.log(env().DEBUG) // output: (boolean) false
-console.log(env().VARIABLE_1) // output: (string) 'value_1'
-console.log(env().VARIABLE_2) // output: (boolean) true
+console.log(env.DEBUG) // (boolean) false
+console.log(env.VARIABLE_1) // (string) 'value_1'
+console.log(env.VARIABLE_2) // (boolean) true
 
-console.log(getenv('DEBUG')) // output: (boolean) 'false'
-console.log(getenv('VARIABLE_1')) // output: (string) 'value_1'
-console.log(getenv('VARIABLE_2')) // output: (boolean) true
+console.log(getEnv('DEBUG')) // (boolean) 'false'
+console.log(getEnv('VARIABLE_1')) // (string) 'value_1'
+console.log(getEnv('VARIABLE_2')) // (boolean) true
 
-// ** With extra configuration of `dotenv-conversion`
-const {parsed} = install({
-    dotenvConversionConfig: {
+// ** With extra configuration options of `dotenv` or `dotenv-conversion`
+const {parsed} = parseEnv({
+    dotenvConfigOptions: { ... },
+    dotenvConversionConfigOptions: {
         specs: {
             VARIABLE_1(value) {
                 return value.toUpperCase()
@@ -62,28 +64,29 @@ const {parsed} = install({
         },
     },
 })
+const env = getEnv()
 
-console.log(parsed) // output: (object) { ... , VARIABLE_1: 'VALUE_1', VARIABLE_2: true, ... }
-console.log(process.env) // output: (object) { ... , DEBUG: 'false', VARIABLE_1: 'VALUE_1', VARIABLE_2: 'true', ... }
-console.log(env()) // output: (object) { ... , DEBUG: false, VARIABLE_1: 'VALUE_1', VARIABLE_2: true, ... }
+console.log(parsed) // (object) { ... , VARIABLE_1: 'VALUE_1', VARIABLE_2: true, ... }
+console.log(process.env) // (object) { ... , DEBUG: 'false', VARIABLE_1: 'VALUE_1', VARIABLE_2: 'true', ... }
+console.log(env) // (object) { ... , DEBUG: false, VARIABLE_1: 'VALUE_1', VARIABLE_2: true, ... }
 
-console.log(process.env.DEBUG) // output: (string) 'false'
-console.log(process.env.VARIABLE_1) // output: (string) 'value_1'
-console.log(process.env.VARIABLE_2) // output: (string) 'true'
+console.log(process.env.DEBUG) // (string) 'false'
+console.log(process.env.VARIABLE_1) // (string) 'value_1'
+console.log(process.env.VARIABLE_2) // (string) 'true'
 
-console.log(env().DEBUG) // output: (boolean) false
-console.log(env().VARIABLE_1) // output: (string) 'VALUE_1'
-console.log(env().VARIABLE_2) // output: (boolean) true
+console.log(env.DEBUG) // (boolean) false
+console.log(env.VARIABLE_1) // (string) 'VALUE_1'
+console.log(env.VARIABLE_2) // (boolean) true
 
-console.log(getenv('DEBUG')) // output: (boolean) false
-console.log(getenv('VARIABLE_1')) // output: (string) 'VALUE_1'
-console.log(getenv('VARIABLE_2')) // output: (boolean) true
+console.log(getEnv('DEBUG')) // (boolean) false
+console.log(getEnv('VARIABLE_1')) // (string) 'VALUE_1'
+console.log(getEnv('VARIABLE_2')) // (boolean) true
 
 ```
 
 ## Features
 
-See:
+See configuration options and features at their own repositories:
 
 - [**`dotenv`**](https://github.com/motdotla/dotenv)
 - [**`dotenv-expand`**](https://github.com/motdotla/dotenv-expand)
