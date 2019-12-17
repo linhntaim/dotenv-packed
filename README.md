@@ -29,12 +29,11 @@ VARIABLE_2=yes
 ```
 
 ```javascript
-// javascript
+// .js file
 
 import {install, env, getenv} from 'dotenv-packed'
 
 // ** Basic: parsing, expanding, conversing variables
-
 const {parsed} = install()
 
 console.log(parsed) // output: (object) { ... , VARIABLE_1: 'value_1', VARIABLE_2: true, ... }  
@@ -54,7 +53,6 @@ console.log(getenv('VARIABLE_1')) // output: (string) 'value_1'
 console.log(getenv('VARIABLE_2')) // output: (boolean) true
 
 // ** With extra configuration of `dotenv-conversion`
-
 const {parsed} = install({
     dotenvConversionConfig: {
         specs: {
@@ -89,4 +87,4 @@ See:
 
 - [**`dotenv`**](https://github.com/motdotla/dotenv)
 - [**`dotenv-expand`**](https://github.com/motdotla/dotenv-expand)
-- [**`dotenv-conversion`**](https://github.com/motdotla/dotenv-conversion)
+- [**`dotenv-conversion`**](https://github.com/linhntaim/dotenv-conversion)

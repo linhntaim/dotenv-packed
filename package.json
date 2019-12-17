@@ -1,6 +1,6 @@
 {
     "name": "dotenv-packed",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "Pack dotenv and some of its extensions into one.",
     "main": "dist/main.js",
     "scripts": {
