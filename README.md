@@ -44,14 +44,18 @@ console.log(env) // (object) { ... , DEBUG: false, VARIABLE_1: 'value_1', VARIAB
 console.log(process.env.DEBUG) // (string) 'false'
 console.log(process.env.VARIABLE_1) // (string) 'value_1'
 console.log(process.env.VARIABLE_2) // (string) 'true'
+console.log(process.env.NOT_SET) // undefined
 
 console.log(env.DEBUG) // (boolean) false
 console.log(env.VARIABLE_1) // (string) 'value_1'
 console.log(env.VARIABLE_2) // (boolean) true
+console.log(env.NOT_SET) // undefined
 
 console.log(getEnv('DEBUG')) // (boolean) 'false'
 console.log(getEnv('VARIABLE_1')) // (string) 'value_1'
 console.log(getEnv('VARIABLE_2')) // (boolean) true
+console.log(getEnv('NOT_SET')) // null
+console.log(getEnv('NOT_SET', 'default_value')) // (string) 'default_value'
 
 // ** With extra configuration options of `dotenv` or `dotenv-conversion`
 const {parsed} = parseEnv({
@@ -73,14 +77,18 @@ console.log(env) // (object) { ... , DEBUG: false, VARIABLE_1: 'VALUE_1', VARIAB
 console.log(process.env.DEBUG) // (string) 'false'
 console.log(process.env.VARIABLE_1) // (string) 'value_1'
 console.log(process.env.VARIABLE_2) // (string) 'true'
+console.log(process.env.NOT_SET) // undefined
 
 console.log(env.DEBUG) // (boolean) false
 console.log(env.VARIABLE_1) // (string) 'VALUE_1'
 console.log(env.VARIABLE_2) // (boolean) true
+console.log(env.NOT_SET) // undefined
 
 console.log(getEnv('DEBUG')) // (boolean) false
 console.log(getEnv('VARIABLE_1')) // (string) 'VALUE_1'
 console.log(getEnv('VARIABLE_2')) // (boolean) true
+console.log(getEnv('NOT_SET')) // null
+console.log(getEnv('NOT_SET', 'default_value')) // (string) 'default_value'
 
 ```
 

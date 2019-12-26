@@ -4,6 +4,7 @@ import chai from 'chai'
 
 const describe = mocha.describe
 const it = mocha.it
+const expect = chai.expect
 chai.should()
 
 describe('dotenv-packed', function () {
@@ -24,6 +25,9 @@ describe('dotenv-packed', function () {
             getEnv().should.deep.include(expected)
             getEnv('VARIABLE_1').should.deep.equal(expected.VARIABLE_1)
             getEnv('VARIABLE_2').should.deep.equal(expected.VARIABLE_2)
+            expect(process.env.UNKNOWN).to.be.a('undefined')
+            expect(getEnv('UNKNOWN')).to.be.a('null')
+            getEnv('UNKNOWN', '').should.deep.equal('')
 
             done()
         })
@@ -53,6 +57,9 @@ describe('dotenv-packed', function () {
             getEnv().should.deep.include(expected)
             getEnv('VARIABLE_3').should.deep.equal(expected.VARIABLE_3)
             getEnv('VARIABLE_4').should.deep.equal(expected.VARIABLE_4)
+            expect(process.env.UNKNOWN).to.be.a('undefined')
+            expect(getEnv('UNKNOWN')).to.be.a('null')
+            getEnv('UNKNOWN', '').should.deep.equal('')
 
             done()
         })
