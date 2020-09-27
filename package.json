@@ -1,6 +1,6 @@
 {
     "name": "dotenv-packed",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Pack dotenv and some of its extensions into one.",
     "main": "dist/index.js",
     "scripts": {
@@ -32,7 +32,7 @@
     "homepage": "https://github.com/linhntaim/dotenv-packed#readme",
     "dependencies": {
         "dotenv": "^8.2.0",
-        "dotenv-conversion": "^1.6.0",
+        "dotenv-conversion": "^1.6.1",
         "dotenv-expand": "^5.1.0"
     },
     "devDependencies": {
