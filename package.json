@@ -1,6 +1,6 @@
 {
     "name": "dotenv-packed",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "Pack dotenv and some of its extensions into one.",
     "main": "dist/index.js",
     "scripts": {
@@ -32,17 +32,17 @@
     "homepage": "https://github.com/linhntaim/dotenv-packed#readme",
     "dependencies": {
         "dotenv": "^8.2.0",
-        "dotenv-conversion": "^1.6.1",
+        "dotenv-conversion": "^1.6.2",
         "dotenv-expand": "^5.1.0"
     },
     "devDependencies": {
-        "@babel/cli": "^7.7.7",
-        "@babel/core": "^7.7.7",
-        "@babel/preset-env": "^7.7.7",
-        "@babel/register": "^7.7.7",
-        "chai": "^4.2.0",
-        "coveralls": "^3.0.9",
-        "mocha": "^6.2.2",
-        "nyc": "^14.1.1"
+        "@babel/cli": "^7.13.14",
+        "@babel/core": "^7.13.14",
+        "@babel/preset-env": "^7.13.12",
+        "@babel/register": "^7.13.14",
+        "chai": "^4.3.4",
+        "coveralls": "^3.1.0",
+        "mocha": "^8.3.2",
+        "nyc": "^15.1.0"
     }
 }

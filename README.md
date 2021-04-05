@@ -9,19 +9,19 @@ Pack **`dotenv`** and some of its extensions (**`dotenv-expand`** and **`dotenv-
 
 ## Install
 
-```shell script
+```bash
 npm install dotenv-packed
 ```
 
 ## Usage
 
-```shell script
+```dotenv
 # process.env
 
 DEBUG=false
 ```
 
-```shell script
+```dotenv
 # .env file
 
 VARIABLE_1=value_1
