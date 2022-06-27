@@ -1,6 +1,6 @@
 {
     "name": "dotenv-packed",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "description": "Pack dotenv and some of its extensions into one.",
     "main": "dist/index.js",
     "scripts": {
@@ -42,7 +42,7 @@
         "@babel/register": "^7.17.7",
         "chai": "^4.3.6",
         "coveralls": "^3.1.1",
-        "mocha": "^8.4.0",
+        "mocha": "^10.0.0",
         "nyc": "^15.1.0"
     }
 }
