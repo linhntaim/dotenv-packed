@@ -1,6 +1,6 @@
 {
     "name": "dotenv-packed",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "description": "Pack dotenv and some of its extensions into one.",
     "main": "dist/index.js",
     "scripts": {
@@ -10,7 +10,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/linhntaim/dotenv-packed.git"
+        "url": "https://github.com/linhntaim/dotenv-packed.git"
     },
     "keywords": [
         "dotenv",
@@ -24,25 +24,25 @@
         "expand",
         "conversion"
     ],
-    "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://linhntaim.com)",
+    "author": "Nguyen Tuan Linh <contact@linhntaim.com> (https://www.linhntaim.com)",
     "license": "MIT",
     "bugs": {
         "url": "https://github.com/linhntaim/dotenv-packed/issues"
     },
     "homepage": "https://github.com/linhntaim/dotenv-packed#readme",
     "dependencies": {
-        "dotenv": "^8.6.0",
-        "dotenv-conversion": "^1.6.5",
-        "dotenv-expand": "^5.1.0"
+        "dotenv": "^16.3.1",
+        "dotenv-conversion": "^1.6.7",
+        "dotenv-expand": "^10.0.0"
     },
     "devDependencies": {
-        "@babel/cli": "^7.17.10",
-        "@babel/core": "^7.18.5",
-        "@babel/preset-env": "^7.18.2",
-        "@babel/register": "^7.17.7",
-        "chai": "^4.3.6",
+        "@babel/cli": "^7.23.0",
+        "@babel/core": "^7.23.0",
+        "@babel/preset-env": "^7.22.20",
+        "@babel/register": "^7.22.15",
+        "chai": "^4.3.10",
         "coveralls": "^3.1.1",
-        "mocha": "^10.0.0",
+        "mocha": "^10.2.0",
         "nyc": "^15.1.0"
     }
 }

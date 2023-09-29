@@ -1,13 +1,13 @@
 # dotenv-packed
 
 [![NPM version](https://img.shields.io/npm/v/dotenv-packed.svg?style=flat-square)](https://www.npmjs.com/package/dotenv-packed)
-[![Travis (.org)](https://img.shields.io/travis/linhntaim/dotenv-packed?style=flat-square)](https://travis-ci.org/linhntaim/dotenv-packed)
+[![Travis (.org)](https://img.shields.io/travis/com/linhntaim/dotenv-packed?style=flat-square)](https://app.travis-ci.com/github/linhntaim/dotenv-packed)
 [![Coveralls github](https://img.shields.io/coveralls/github/linhntaim/dotenv-packed?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-packed)
 [![NPM](https://img.shields.io/npm/l/dotenv-packed?style=flat-square)](https://github.com/linhntaim/dotenv-packed/blob/master/LICENSE)
 
 Pack **`dotenv`** and some of its extensions (**`dotenv-expand`** and **`dotenv-conversion`**) into one.
 
-## Install
+## Installation
 
 ```bash
 npm install dotenv-packed
