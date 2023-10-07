@@ -1,7 +1,9 @@
 import {parseEnv, getEnv} from '../src'
-import mocha from 'mocha'
 import chai from 'chai'
+import mocha from 'mocha'
 
+const after = mocha.after
+const afterEach = mocha.afterEach
 const describe = mocha.describe
 const it = mocha.it
 const expect = chai.expect

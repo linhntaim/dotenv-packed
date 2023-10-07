@@ -7,6 +7,14 @@
 
 Pack **`dotenv`** and some of its extensions (**`dotenv-expand`** and **`dotenv-conversion`**) into one.
 
+---
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [Features](#features)
+
+---
+
 ## Installation
 
 ```bash
