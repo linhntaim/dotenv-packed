@@ -15,8 +15,8 @@ function removeParsed(config) {
   }
   return config;
 }
-function load(flow, dotenvFlowConfig, dotenvConfig) {
-  var result = flow ? _dotenvFlow["default"].config(dotenvFlowConfig) : _dotenv["default"].config(dotenvConfig);
+function load(config, useFlow) {
+  var result = useFlow ? _dotenvFlow["default"].config(config) : _dotenv["default"].config(config);
   if ('error' in result) {
     throw result.error;
   }
@@ -33,7 +33,7 @@ function createResult(parsed, config) {
      */
     get: function get(name) {
       var defaultValue = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-      if (name in parsed.env) {
+      if (name in parsed) {
         return parsed[name];
       }
       if (!config.ignoreProcessEnv && name in process.env) {
@@ -47,7 +47,7 @@ function pack() {
   var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
   var dotenvConfig = 'parsed' in config ? {
     parsed: config.parsed
-  } : load('flow' in config ? config.flow : true, 'dotenvFlowConfig' in config ? config.dotenvFlowConfig : {}, 'dotenvConfig' in config ? config.dotenvConfig : {});
+  } : load('dotenvConfig' in config ? config.dotenvConfig : {}, 'useFlow' in config ? config.useFlow : true);
   var dotenvExpandConfig = 'dotenvExpandConfig' in config ? removeParsed(config.dotenvExpandConfig) : {};
   var dotenvConversionConfig = 'dotenvConversionConfig' in config ? removeParsed(config.dotenvConversionConfig) : {};
   if (!('ignoreProcessEnv' in config)) {

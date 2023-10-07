@@ -10,8 +10,8 @@ function removeParsed(config) {
     return config
 }
 
-function load(flow, dotenvFlowConfig, dotenvConfig) {
-    const result = flow ? dotenvFlow.config(dotenvFlowConfig) : dotenv.config(dotenvConfig)
+function load(config, useFlow) {
+    const result = useFlow ? dotenvFlow.config(config) : dotenv.config(config)
     if ('error' in result) {
         throw result.error
     }
@@ -28,7 +28,7 @@ function createResult(parsed, config) {
          * @returns {*|null}
          */
         get(name, defaultValue = null) {
-            if (name in parsed.env) {
+            if (name in parsed) {
                 return parsed[name]
             }
             if (!config.ignoreProcessEnv && name in process.env) {
@@ -40,13 +40,14 @@ function createResult(parsed, config) {
 }
 
 function pack(config = {}) {
-    const dotenvConfig = 'parsed' in config ? {
-        parsed: config.parsed,
-    } : load(
-        'flow' in config ? config.flow : true,
-        'dotenvFlowConfig' in config ? config.dotenvFlowConfig : {},
-        'dotenvConfig' in config ? config.dotenvConfig : {},
-    )
+    const dotenvConfig = 'parsed' in config
+        ? {
+            parsed: config.parsed,
+        }
+        : load(
+            'dotenvConfig' in config ? config.dotenvConfig : {},
+            'useFlow' in config ? config.useFlow : true,
+        )
     const dotenvExpandConfig = 'dotenvExpandConfig' in config ? removeParsed(config.dotenvExpandConfig) : {}
     const dotenvConversionConfig = 'dotenvConversionConfig' in config ? removeParsed(config.dotenvConversionConfig) : {}
     if (!('ignoreProcessEnv' in config)) {
