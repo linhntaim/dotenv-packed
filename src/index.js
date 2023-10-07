@@ -10,29 +10,99 @@ function removeParsed(config) {
     return config
 }
 
+function attachDotenvFlowDefaultConfig(config) {
+    config.silent = true
+    return config
+}
+
+function attachDotenvDefaultConfig(config) {
+    return config
+}
+
 function load(config, useFlow) {
-    const result = useFlow ? dotenvFlow.config(config) : dotenv.config(config)
+    const result = useFlow
+        ? dotenvFlow.config(attachDotenvFlowDefaultConfig(config))
+        : dotenv.config(attachDotenvDefaultConfig(config))
     if ('error' in result) {
-        throw result.error
+        throw 'Cannot load .env file'
     }
     return result
 }
 
 function createResult(parsed, config) {
+    /**
+     * @var {object}
+     */
+    let _memAll
+
+    const _all = function () {
+        return {...(_memAll ?? (_memAll = Object.assign({}, process.env, parsed)))}
+    }
+
+    /**
+     *
+     * @param {object|null} defaultValues
+     * @returns {object}
+     */
+    const _getAll = function (defaultValues) {
+        const all = _all()
+        if (defaultValues !== null) {
+            for (const [name, defaultValue] of Object.entries(defaultValues)) {
+                all[name] = all[name] ?? defaultValue
+            }
+        }
+        return all
+    }
+
+    /**
+     *
+     * @param {array|object} names
+     * @param {object|null} defaultValues
+     * @returns {object}
+     */
+    const _getOnly = function (names, defaultValues) {
+        const all = _all()
+
+        const vars = {}
+        if (names instanceof Array) {
+            const applyDefaultValue = defaultValues === null
+                ? () => null
+                : name => defaultValues[name] ?? null
+            names.forEach(name => {
+                vars[name] = all[name] ?? applyDefaultValue(name)
+            })
+        }
+        else {
+            Object.keys(names).forEach(name => {
+                vars[name] = all[name] ?? names[name]
+            })
+        }
+        return vars
+    }
+
     return {
         parsed,
         /**
          *
-         * @param {string} name
-         * @param {*|null} defaultValue
-         * @returns {*|null}
+         * @param {string|object|array|null} name
+         * @param {string|object|null} defaultValue
+         * @returns {*|object|null}
          */
-        get(name, defaultValue = null) {
-            if (name in parsed) {
-                return parsed[name]
+        get(name = null, defaultValue = null) {
+            if (name === null) {
+                return _getAll(defaultValue)
             }
-            if (!config.ignoreProcessEnv && name in process.env) {
-                return process.env[name]
+            if (name instanceof Array) {
+                return _getOnly(name, defaultValue)
+            }
+            if (typeof name === 'object' && name instanceof Object) {
+                return _getOnly(name, null)
+            }
+            if (name in parsed) {
+                return parsed[name] ?? defaultValue
+            }
+            if (!config.ignoreProcessEnv) {
+                return process.env[name] ?? defaultValue
             }
             return defaultValue
         },
