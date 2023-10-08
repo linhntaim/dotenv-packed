@@ -9,46 +9,25 @@ var _dotenvExpand = _interopRequireDefault(require("dotenv-expand"));
 var _dotenvFlow = _interopRequireDefault(require("dotenv-flow"));
 var _dotenvConversion = _interopRequireDefault(require("dotenv-conversion"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
-function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-function removeParsed(config) {
-  if ('parsed' in config) {
-    delete config.parsed;
+function load(useFlow, options) {
+  if (useFlow) {
+    // dotenv-flow option
+    options.silent = true;
   }
-  return config;
-}
-function attachDotenvFlowDefaultConfig(config) {
-  config.silent = true;
-  return config;
-}
-function attachDotenvDefaultConfig(config) {
-  return config;
-}
-function load(config, useFlow) {
-  var result = useFlow ? _dotenvFlow["default"].config(attachDotenvFlowDefaultConfig(config)) : _dotenv["default"].config(attachDotenvDefaultConfig(config));
+  var result = useFlow ? _dotenvFlow["default"].config(options) : _dotenv["default"].config(options);
   if ('error' in result) {
     throw 'Cannot load .env file';
   }
   return result;
 }
-function createResult(parsed, config) {
+function createResult(parsed, options) {
   /**
    * @var {object}
    */
-  var _memAll;
-  var _all = function _all() {
-    var _memAll2;
-    return _objectSpread({}, (_memAll2 = _memAll) !== null && _memAll2 !== void 0 ? _memAll2 : _memAll = Object.assign({}, process.env, parsed));
+  var _all;
+  var _memAll = function _memAll() {
+    var _all2;
+    return (_all2 = _all) !== null && _all2 !== void 0 ? _all2 : _all = Object.assign({}, process.env, parsed);
   };
 
   /**
@@ -57,15 +36,13 @@ function createResult(parsed, config) {
    * @returns {object}
    */
   var _getAll = function _getAll(defaultValues) {
-    var all = _all();
+    // need to clone all
+    var all = Object.assign({}, _memAll());
     if (defaultValues !== null) {
-      for (var _i = 0, _Object$entries = Object.entries(defaultValues); _i < _Object$entries.length; _i++) {
+      Object.keys(defaultValues).forEach(function (name) {
         var _all$name;
-        var _Object$entries$_i = _slicedToArray(_Object$entries[_i], 2),
-          name = _Object$entries$_i[0],
-          defaultValue = _Object$entries$_i[1];
-        all[name] = (_all$name = all[name]) !== null && _all$name !== void 0 ? _all$name : defaultValue;
-      }
+        all[name] = (_all$name = all[name]) !== null && _all$name !== void 0 ? _all$name : defaultValues[name];
+      });
     }
     return all;
   };
@@ -77,7 +54,7 @@ function createResult(parsed, config) {
    * @returns {object}
    */
   var _getOnly = function _getOnly(names, defaultValues) {
-    var all = _all();
+    var all = _memAll();
     var vars = {};
     if (names instanceof Array) {
       var applyDefaultValue = defaultValues === null ? function () {
@@ -115,14 +92,14 @@ function createResult(parsed, config) {
       if (name instanceof Array) {
         return _getOnly(name, defaultValue);
       }
-      if (_typeof(name) === 'object' && name instanceof Object) {
+      if (name instanceof Object && !(name instanceof String)) {
         return _getOnly(name, null);
       }
       if (name in parsed) {
         var _parsed$name;
         return (_parsed$name = parsed[name]) !== null && _parsed$name !== void 0 ? _parsed$name : defaultValue;
       }
-      if (!config.ignoreProcessEnv) {
+      if (!options.ignoreProcessEnv) {
         var _process$env$name;
         return (_process$env$name = process.env[name]) !== null && _process$env$name !== void 0 ? _process$env$name : defaultValue;
       }
@@ -131,19 +108,23 @@ function createResult(parsed, config) {
   };
 }
 function pack() {
-  var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var dotenvConfig = 'parsed' in config ? {
-    parsed: config.parsed
-  } : load('dotenvConfig' in config ? config.dotenvConfig : {}, 'useFlow' in config ? config.useFlow : true);
-  var dotenvExpandConfig = 'dotenvExpandConfig' in config ? removeParsed(config.dotenvExpandConfig) : {};
-  var dotenvConversionConfig = 'dotenvConversionConfig' in config ? removeParsed(config.dotenvConversionConfig) : {};
-  if (!('ignoreProcessEnv' in config)) {
-    config.ignoreProcessEnv = false;
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  var dotenvOptions = 'parsed' in options ? {
+    parsed: options.parsed
+  } : load('useFlow' in options ? options.useFlow : true, 'dotenvOptions' in options ? options.dotenvOptions : {});
+  if (!('ignoreProcessEnv' in options)) {
+    options.ignoreProcessEnv = false;
   }
-  dotenvExpandConfig.ignoreProcessEnv = config.ignoreProcessEnv;
-  dotenvConversionConfig.ignoreProcessEnv = config.ignoreProcessEnv;
-  return createResult(_dotenvConversion["default"].convert(Object.assign({}, _dotenvExpand["default"].expand(Object.assign({}, dotenvConfig, dotenvExpandConfig)), dotenvConversionConfig)).parsed, {
-    ignoreProcessEnv: config.ignoreProcessEnv
+  var removeParsed = function removeParsed(c) {
+    'parsed' in c && delete c.parsed;
+    return c;
+  };
+  var dotenvExpandOptions = 'dotenvExpandOptions' in options ? removeParsed(options.dotenvExpandOptions) : {};
+  var dotenvConversionOptions = 'dotenvConversionOptions' in options ? removeParsed(options.dotenvConversionOptions) : {};
+  dotenvExpandOptions.ignoreProcessEnv = options.ignoreProcessEnv;
+  dotenvConversionOptions.ignoreProcessEnv = options.ignoreProcessEnv;
+  return createResult(_dotenvConversion["default"].convert(Object.assign({}, _dotenvExpand["default"].expand(Object.assign({}, dotenvOptions, dotenvExpandOptions)), dotenvConversionOptions)).parsed, {
+    ignoreProcessEnv: options.ignoreProcessEnv
   });
 }
 var _default = exports["default"] = {

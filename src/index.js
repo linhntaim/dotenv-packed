@@ -3,40 +3,28 @@ import dotenvExpand from 'dotenv-expand'
 import dotenvFlow from 'dotenv-flow'
 import dotenvConversion from 'dotenv-conversion'
 
-function removeParsed(config) {
-    if ('parsed' in config) {
-        delete config.parsed
+function load(useFlow, options) {
+    if (useFlow) {
+        // dotenv-flow option
+        options.silent = true
     }
-    return config
-}
-
-function attachDotenvFlowDefaultConfig(config) {
-    config.silent = true
-    return config
-}
-
-function attachDotenvDefaultConfig(config) {
-    return config
-}
-
-function load(config, useFlow) {
     const result = useFlow
-        ? dotenvFlow.config(attachDotenvFlowDefaultConfig(config))
-        : dotenv.config(attachDotenvDefaultConfig(config))
+        ? dotenvFlow.config(options)
+        : dotenv.config(options)
     if ('error' in result) {
         throw 'Cannot load .env file'
     }
     return result
 }
 
-function createResult(parsed, config) {
+function createResult(parsed, options) {
     /**
      * @var {object}
      */
-    let _memAll
+    let _all
 
-    const _all = function () {
-        return {...(_memAll ?? (_memAll = Object.assign({}, process.env, parsed)))}
+    const _memAll = function () {
+        return _all ?? (_all = Object.assign({}, process.env, parsed))
     }
 
     /**
@@ -45,11 +33,12 @@ function createResult(parsed, config) {
      * @returns {object}
      */
     const _getAll = function (defaultValues) {
-        const all = _all()
+        // need to clone all
+        const all = Object.assign({}, _memAll())
         if (defaultValues !== null) {
-            for (const [name, defaultValue] of Object.entries(defaultValues)) {
-                all[name] = all[name] ?? defaultValue
-            }
+            Object.keys(defaultValues).forEach(name => {
+                all[name] = all[name] ?? defaultValues[name]
+            })
         }
         return all
     }
@@ -61,7 +50,7 @@ function createResult(parsed, config) {
      * @returns {object}
      */
     const _getOnly = function (names, defaultValues) {
-        const all = _all()
+        const all = _memAll()
 
         const vars = {}
         if (names instanceof Array) {
@@ -95,13 +84,13 @@ function createResult(parsed, config) {
             if (name instanceof Array) {
                 return _getOnly(name, defaultValue)
             }
-            if (typeof name === 'object' && name instanceof Object) {
+            if (name instanceof Object && !(name instanceof String)) {
                 return _getOnly(name, null)
             }
             if (name in parsed) {
                 return parsed[name] ?? defaultValue
             }
-            if (!config.ignoreProcessEnv) {
+            if (!options.ignoreProcessEnv) {
                 return process.env[name] ?? defaultValue
             }
             return defaultValue
@@ -109,22 +98,26 @@ function createResult(parsed, config) {
     }
 }
 
-function pack(config = {}) {
-    const dotenvConfig = 'parsed' in config
+function pack(options = {}) {
+    const dotenvOptions = 'parsed' in options
         ? {
-            parsed: config.parsed,
+            parsed: options.parsed,
         }
         : load(
-            'dotenvConfig' in config ? config.dotenvConfig : {},
-            'useFlow' in config ? config.useFlow : true,
+            'useFlow' in options ? options.useFlow : true,
+            'dotenvOptions' in options ? options.dotenvOptions : {},
         )
-    const dotenvExpandConfig = 'dotenvExpandConfig' in config ? removeParsed(config.dotenvExpandConfig) : {}
-    const dotenvConversionConfig = 'dotenvConversionConfig' in config ? removeParsed(config.dotenvConversionConfig) : {}
-    if (!('ignoreProcessEnv' in config)) {
-        config.ignoreProcessEnv = false
+    if (!('ignoreProcessEnv' in options)) {
+        options.ignoreProcessEnv = false
     }
-    dotenvExpandConfig.ignoreProcessEnv = config.ignoreProcessEnv
-    dotenvConversionConfig.ignoreProcessEnv = config.ignoreProcessEnv
+    const removeParsed = c => {
+        'parsed' in c && delete c.parsed
+        return c
+    }
+    const dotenvExpandOptions = 'dotenvExpandOptions' in options ? removeParsed(options.dotenvExpandOptions) : {}
+    const dotenvConversionOptions = 'dotenvConversionOptions' in options ? removeParsed(options.dotenvConversionOptions) : {}
+    dotenvExpandOptions.ignoreProcessEnv = options.ignoreProcessEnv
+    dotenvConversionOptions.ignoreProcessEnv = options.ignoreProcessEnv
 
     return createResult(
         dotenvConversion.convert(
@@ -133,15 +126,15 @@ function pack(config = {}) {
                 dotenvExpand.expand(
                     Object.assign(
                         {},
-                        dotenvConfig,
-                        dotenvExpandConfig,
+                        dotenvOptions,
+                        dotenvExpandOptions,
                     ),
                 ),
-                dotenvConversionConfig,
+                dotenvConversionOptions,
             ),
         ).parsed,
         {
-            ignoreProcessEnv: config.ignoreProcessEnv,
+            ignoreProcessEnv: options.ignoreProcessEnv,
         },
     )
 }

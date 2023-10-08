@@ -8,6 +8,12 @@
             "require": "./dist/index.js",
             "default": "./dist/index.js"
         },
+        "./config": "./config.js",
+        "./config.js": "./config.js",
+        "./dist/env-options": "./dist/env-options.js",
+        "./dist/env-options.js": "./dist/env-options.js",
+        "./dist/cli-options": "./dist/cli-options.js",
+        "./dist/cli-options.js": "./dist/cli-options.js",
         "./package.json": "./package.json"
     },
     "scripts": {

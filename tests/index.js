@@ -28,6 +28,14 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '4.5e1',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,4.5e1,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":4.5e1,"d":"x"}',
+                VARIABLE_EXPAND: 'boolean:$VARIABLE_NUMBER',
             }
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
@@ -37,7 +45,15 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_100: 'variable 100',
             }
@@ -49,8 +65,8 @@ describe('dotenv-packed', function () {
                     useEnv(input),
                     {
                         ignoreProcessEnv: true,
-                        dotenvExpandConfig: {},
-                        dotenvConversionConfig: {
+                        dotenvExpandOptions: {},
+                        dotenvConversionOptions: {
                             parsed: {
                                 CONVERSION: 'true',
                             },
@@ -59,13 +75,22 @@ describe('dotenv-packed', function () {
                 ),
             )
 
-            parsed.should.deep.equal(expected)
+            parsed.should.deep.include(expected)
+            parsed.VARIABLE_SYMBOL.should.be.a('symbol')
+            parsed.VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
             parsed.should.not.haveOwnProperty('CONVERSION')
             process.env.should.deep.include(expectedProcessEnv)
             process.env.should.not.haveOwnProperty('CONVERSION')
             process.env.should.not.haveOwnProperty('VARIABLE_1')
             process.env.should.not.haveOwnProperty('VARIABLE_2')
             process.env.should.not.haveOwnProperty('VARIABLE_NULL')
+            process.env.should.not.haveOwnProperty('VARIABLE_UNDEFINED')
+            process.env.should.not.haveOwnProperty('VARIABLE_BOOLEAN')
+            process.env.should.not.haveOwnProperty('VARIABLE_NUMBER')
+            process.env.should.not.haveOwnProperty('VARIABLE_BIGINT')
+            process.env.should.not.haveOwnProperty('VARIABLE_ARRAY')
+            process.env.should.not.haveOwnProperty('VARIABLE_OBJECT')
+            process.env.should.not.haveOwnProperty('VARIABLE_EXPAND')
             expect(get('VARIABLE_1000')).to.be.a('null')
 
             done()
@@ -207,7 +232,7 @@ describe('dotenv-packed', function () {
             useFile && fs.copyFileSync(`./tests/inputs/.env`, dotEnvPath)
             return dotenvPacked.pack({
                 useFlow: false,
-                dotenvConfig: {},
+                dotenvOptions: {},
             })
         }
 
@@ -248,18 +273,36 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
                 VARIABLE_100: 'variable 100',
             }
 
             Object.assign(process.env, inputProcessEnv)
             const {parsed} = useEnv()
 
-            parsed.should.deep.equal(expected)
+            parsed.should.deep.include(expected)
+            parsed.VARIABLE_SYMBOL.should.be.a('symbol')
+            parsed.VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
             process.env.should.deep.include(expectedProcessEnv)
 
             done()
