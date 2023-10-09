@@ -20,7 +20,7 @@ function load(useFlow, options) {
 function createResult(parsed, options) {
     /**
      * @var {object}
-     */
+     */   
     let _all
 
     const _memAll = function () {
@@ -99,7 +99,7 @@ function createResult(parsed, options) {
 }
 
 function pack(options = {}) {
-    const dotenvOptions = 'parsed' in options
+    const dotenvConfig = 'parsed' in options
         ? {
             parsed: options.parsed,
         }
@@ -126,7 +126,7 @@ function pack(options = {}) {
                 dotenvExpand.expand(
                     Object.assign(
                         {},
-                        dotenvOptions,
+                        dotenvConfig,
                         dotenvExpandOptions,
                     ),
                 ),

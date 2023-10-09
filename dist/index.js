@@ -109,7 +109,7 @@ function createResult(parsed, options) {
 }
 function pack() {
   var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  var dotenvOptions = 'parsed' in options ? {
+  var dotenvConfig = 'parsed' in options ? {
     parsed: options.parsed
   } : load('useFlow' in options ? options.useFlow : true, 'dotenvOptions' in options ? options.dotenvOptions : {});
   if (!('ignoreProcessEnv' in options)) {
@@ -123,7 +123,7 @@ function pack() {
   var dotenvConversionOptions = 'dotenvConversionOptions' in options ? removeParsed(options.dotenvConversionOptions) : {};
   dotenvExpandOptions.ignoreProcessEnv = options.ignoreProcessEnv;
   dotenvConversionOptions.ignoreProcessEnv = options.ignoreProcessEnv;
-  return createResult(_dotenvConversion["default"].convert(Object.assign({}, _dotenvExpand["default"].expand(Object.assign({}, dotenvOptions, dotenvExpandOptions)), dotenvConversionOptions)).parsed, {
+  return createResult(_dotenvConversion["default"].convert(Object.assign({}, _dotenvExpand["default"].expand(Object.assign({}, dotenvConfig, dotenvExpandOptions)), dotenvConversionOptions)).parsed, {
     ignoreProcessEnv: options.ignoreProcessEnv
   });
 }

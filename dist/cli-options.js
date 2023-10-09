@@ -15,12 +15,16 @@ function _default() {
     var nodeEnvArg = '--node-env';
     argv.some(function (arg, index) {
       if (arg === nodeEnvArg) {
-        dotenvFlowOptions.node_env = argv[index + 1];
-        return true;
-      }
-      if (arg.startsWith("".concat(nodeEnvArg, "="))) {
-        dotenvFlowOptions.node_env = arg.substring(nodeEnvArg.length + 1);
-        return true;
+        if (index + 1 < argv.length) {
+          dotenvFlowOptions.node_env = argv[index + 1];
+          return true;
+        }
+      } else if (arg.startsWith("".concat(nodeEnvArg, "="))) {
+        var nodeEnv = arg.substring(nodeEnvArg.length + 1);
+        if (nodeEnv !== '') {
+          dotenvFlowOptions.node_env = nodeEnv;
+          return true;
+        }
       }
       return false;
     });
