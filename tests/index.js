@@ -1,5 +1,5 @@
 import chai from 'chai'
-import dotenvPacked from '../src'
+import dotenvPacked from '../dist'
 import fs from 'fs'
 import mocha from 'mocha'
 
@@ -11,11 +11,12 @@ const expect = chai.expect
 chai.should()
 
 const originEnv = {...process.env}
-afterEach(() => {
-    process.env = {...originEnv}
-})
 
 describe('dotenv-packed', function () {
+    afterEach(() => {
+        process.env = {...originEnv}
+    })
+
     describe('pack:standalone', function () {
         function useEnv(env) {
             return {
@@ -32,6 +33,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_BOOLEAN: 'true',
                 VARIABLE_NUMBER: '4.5e1',
                 VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
                 VARIABLE_SYMBOL: 'Symbol(a)',
                 VARIABLE_ARRAY: '[null,true,4.5e1,"x"]',
                 VARIABLE_OBJECT: '{"a":null,"b":true,"c":4.5e1,"d":"x"}',
@@ -49,6 +51,83 @@ describe('dotenv-packed', function () {
                 VARIABLE_BOOLEAN: true,
                 VARIABLE_NUMBER: 45,
                 VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
+            }
+            const expectedVariableSymbol = Symbol('a')
+            const expectedProcessEnv = {
+                VARIABLE_1: 'variable 1',
+                VARIABLE_2: 'variable 2',
+                VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
+                VARIABLE_100: 'variable 100',
+            }
+
+            Object.assign(process.env, inputProcessEnv)
+            const {parsed, get} = dotenvPacked.pack(
+                Object.assign(
+                    {},
+                    useEnv(input),
+                    {
+                        dotenvExpandOptions: {},
+                        dotenvConversionOptions: {
+                            parsed: {
+                                CONVERSION: 'true',
+                            },
+                        },
+                    },
+                ),
+            )
+
+            parsed.should.deep.include(expected)
+            parsed.VARIABLE_SYMBOL.should.be.a('symbol')
+            parsed.VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
+            parsed.should.not.haveOwnProperty('CONVERSION')
+            process.env.should.deep.include(expectedProcessEnv)
+            process.env.should.not.haveOwnProperty('CONVERSION')
+            expect(get('VARIABLE_1000')).to.be.a('null')
+
+            done()
+        })
+
+        it('parsed:ignore-process-env', function (done) {
+            const input = {
+                VARIABLE_1: 'variable 1',
+                VARIABLE_2: 'variable 2',
+                VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '4.5e1',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,4.5e1,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":4.5e1,"d":"x"}',
+                VARIABLE_EXPAND: 'boolean:$VARIABLE_NUMBER',
+            }
+            const inputProcessEnv = {
+                VARIABLE_100: 'variable 100',
+            }
+
+            const expected = {
+                VARIABLE_1: 'variable 1',
+                VARIABLE_2: 'variable 2',
+                VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
                 VARIABLE_ARRAY: [null, true, 45, 'x'],
                 VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
                 VARIABLE_EXPAND: true,
@@ -88,6 +167,7 @@ describe('dotenv-packed', function () {
             process.env.should.not.haveOwnProperty('VARIABLE_BOOLEAN')
             process.env.should.not.haveOwnProperty('VARIABLE_NUMBER')
             process.env.should.not.haveOwnProperty('VARIABLE_BIGINT')
+            process.env.should.not.haveOwnProperty('VARIABLE_EMPTY')
             process.env.should.not.haveOwnProperty('VARIABLE_ARRAY')
             process.env.should.not.haveOwnProperty('VARIABLE_OBJECT')
             process.env.should.not.haveOwnProperty('VARIABLE_EXPAND')
@@ -101,6 +181,15 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '4.5e1',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,4.5e1,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":4.5e1,"d":"x"}',
+                VARIABLE_EXPAND: 'boolean:$VARIABLE_NUMBER',
             }
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
@@ -110,11 +199,29 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
                 VARIABLE_100: 'variable 100',
             }
 
@@ -125,6 +232,7 @@ describe('dotenv-packed', function () {
             get('VARIABLE_1').should.equal(expected.VARIABLE_1)
             get('VARIABLE_2').should.equal(expected.VARIABLE_2)
             get('VARIABLE_NULL', 'default null').should.equal('default null')
+            get('VARIABLE_EMPTY', 'default empty').should.equal('')
             get('VARIABLE_100').should.equal(expectedProcessEnv.VARIABLE_100)
 
             // none-existing variable
@@ -140,6 +248,15 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '4.5e1',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,4.5e1,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":4.5e1,"d":"x"}',
+                VARIABLE_EXPAND: 'boolean:$VARIABLE_NUMBER',
             }
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
@@ -149,17 +266,43 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
                 VARIABLE_100: 'variable 100',
             }
             const expectedAll = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
                 VARIABLE_100: 'variable 100',
             }
 
@@ -168,6 +311,8 @@ describe('dotenv-packed', function () {
 
             // all
             get().should.deep.include(expectedAll)
+            get().VARIABLE_SYMBOL.should.be.a('symbol')
+            get().VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
             // all with default values
             get(null, {VARIABLE_1: 'default 1', VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'})
                 .should.deep.include(Object.assign({}, expectedAll, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
@@ -180,6 +325,15 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '4.5e1',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,4.5e1,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":4.5e1,"d":"x"}',
+                VARIABLE_EXPAND: 'boolean:$VARIABLE_NUMBER',
             }
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
@@ -189,34 +343,57 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
                 VARIABLE_100: 'variable 100',
+            }
+            const expectedOnly = {
+                VARIABLE_1: 'variable 1',
+                VARIABLE_2: 'variable 2',
+                VARIABLE_NULL: null,
             }
 
             Object.assign(process.env, inputProcessEnv)
             const {get} = dotenvPacked.pack(useEnv(input))
 
             // only with existing variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL']).should.deep.equal(expected)
+            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL']).should.deep.equal(expectedOnly)
             // only with existing variables and none-existing variables
             get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3']).should.deep.equal(
-                Object.assign({}, expected, {VARIABLE_3: null}),
+                Object.assign({}, expectedOnly, {VARIABLE_3: null}),
             )
             // only with existing variables and none-existing variables which have default values
             get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3'], {VARIABLE_3: 'default 3'}).should.deep.equal(
-                Object.assign({}, expected, {VARIABLE_3: 'default 3'}),
+                Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}),
             )
             // only with existing variables and none-existing variables which don't have default values
             get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3'], {}).should.deep.equal(
-                Object.assign({}, expected, {VARIABLE_3: null}),
+                Object.assign({}, expectedOnly, {VARIABLE_3: null}),
             )
             // only with existing variables and none-existing variables which have default values 2
             get({VARIABLE_1: 'default 1', VARIABLE_2: 'default 2', VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'})
-                .should.deep.equal(Object.assign({}, expected, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
+                .should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
 
             done()
         })
@@ -245,11 +422,29 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
                 VARIABLE_100: 'variable 100',
             }
 
@@ -277,6 +472,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_BOOLEAN: true,
                 VARIABLE_NUMBER: 45,
                 VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
                 VARIABLE_ARRAY: [null, true, 45, 'x'],
                 VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
                 VARIABLE_EXPAND: true,
@@ -290,6 +486,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_BOOLEAN: 'true',
                 VARIABLE_NUMBER: '45',
                 VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
                 VARIABLE_SYMBOL: 'Symbol(a)',
                 VARIABLE_ARRAY: '[null,true,45,"x"]',
                 VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
@@ -317,11 +514,29 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
                 VARIABLE_100: 'variable 100',
             }
 
@@ -332,6 +547,7 @@ describe('dotenv-packed', function () {
             get('VARIABLE_1').should.equal(expected.VARIABLE_1)
             get('VARIABLE_2').should.equal(expected.VARIABLE_2)
             get('VARIABLE_NULL', 'default null').should.equal('default null')
+            get('VARIABLE_EMPTY', 'default empty').should.equal('')
             get('VARIABLE_100').should.equal(expectedProcessEnv.VARIABLE_100)
 
             // none-existing variable
@@ -351,17 +567,43 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
                 VARIABLE_100: 'variable 100',
             }
             const expectedAll = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
                 VARIABLE_100: 'variable 100',
             }
 
@@ -370,6 +612,8 @@ describe('dotenv-packed', function () {
 
             // all
             get().should.deep.include(expectedAll)
+            get().VARIABLE_SYMBOL.should.be.a('symbol')
+            get().VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
             // all with default values
             get(null, {VARIABLE_1: 'default 1', VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'})
                 .should.deep.include(Object.assign({}, expectedAll, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
@@ -386,34 +630,57 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_BOOLEAN: true,
+                VARIABLE_NUMBER: 45,
+                VARIABLE_BIGINT: 1n,
+                VARIABLE_EMPTY: '',
+                VARIABLE_ARRAY: [null, true, 45, 'x'],
+                VARIABLE_OBJECT: {'a': null, 'b': true, 'c': 45, 'd': 'x'},
+                VARIABLE_EXPAND: true,
             }
+            const expectedVariableSymbol = Symbol('a')
             const expectedProcessEnv = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: 'null',
+                VARIABLE_UNDEFINED: 'undefined',
+                VARIABLE_BOOLEAN: 'true',
+                VARIABLE_NUMBER: '45',
+                VARIABLE_BIGINT: '1n',
+                VARIABLE_EMPTY: '',
+                VARIABLE_SYMBOL: 'Symbol(a)',
+                VARIABLE_ARRAY: '[null,true,45,"x"]',
+                VARIABLE_OBJECT: '{"a":null,"b":true,"c":45,"d":"x"}',
+                VARIABLE_EXPAND: 'true',
                 VARIABLE_100: 'variable 100',
+            }
+            const expectedOnly = {
+                VARIABLE_1: 'variable 1',
+                VARIABLE_2: 'variable 2',
+                VARIABLE_NULL: null,
             }
 
             Object.assign(process.env, inputProcessEnv)
             const {get} = useEnv()
 
             // only with existing variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL']).should.deep.equal(expected)
+            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL']).should.deep.equal(expectedOnly)
             // only with existing variables and none-existing variables
             get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3']).should.deep.equal(
-                Object.assign({}, expected, {VARIABLE_3: null}),
+                Object.assign({}, expectedOnly, {VARIABLE_3: null}),
             )
             // only with existing variables and none-existing variables which have default values
             get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3'], {VARIABLE_3: 'default 3'}).should.deep.equal(
-                Object.assign({}, expected, {VARIABLE_3: 'default 3'}),
+                Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}),
             )
             // only with existing variables and none-existing variables which don't have default values
             get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3'], {}).should.deep.equal(
-                Object.assign({}, expected, {VARIABLE_3: null}),
+                Object.assign({}, expectedOnly, {VARIABLE_3: null}),
             )
             // only with existing variables and none-existing variables which have default values 2
             get({VARIABLE_1: 'default 1', VARIABLE_2: 'default 2', VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'})
-                .should.deep.equal(Object.assign({}, expected, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
+                .should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
 
             done()
         })

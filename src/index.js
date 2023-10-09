@@ -20,7 +20,7 @@ function load(useFlow, options) {
 function createResult(parsed, options) {
     /**
      * @var {object}
-     */   
+     */
     let _all
 
     const _memAll = function () {
@@ -107,17 +107,16 @@ function pack(options = {}) {
             'useFlow' in options ? options.useFlow : true,
             'dotenvOptions' in options ? options.dotenvOptions : {},
         )
-    if (!('ignoreProcessEnv' in options)) {
-        options.ignoreProcessEnv = false
-    }
     const removeParsed = c => {
         'parsed' in c && delete c.parsed
         return c
     }
     const dotenvExpandOptions = 'dotenvExpandOptions' in options ? removeParsed(options.dotenvExpandOptions) : {}
     const dotenvConversionOptions = 'dotenvConversionOptions' in options ? removeParsed(options.dotenvConversionOptions) : {}
-    dotenvExpandOptions.ignoreProcessEnv = options.ignoreProcessEnv
-    dotenvConversionOptions.ignoreProcessEnv = options.ignoreProcessEnv
+    if ('ignoreProcessEnv' in options) {
+        dotenvExpandOptions.ignoreProcessEnv = options.ignoreProcessEnv
+        dotenvConversionOptions.ignoreProcessEnv = options.ignoreProcessEnv
+    }
 
     return createResult(
         dotenvConversion.convert(

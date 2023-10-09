@@ -1,5 +1,5 @@
 import chai from 'chai'
-import cliOptions from '../src/cli-options'
+import cliOptions from '../dist/cli-options'
 import mocha from 'mocha'
 
 const after = mocha.after

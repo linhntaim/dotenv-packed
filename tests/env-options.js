@@ -1,5 +1,5 @@
 import chai from 'chai'
-import envOptions from '../src/env-options'
+import envOptions from '../dist/env-options'
 import mocha from 'mocha'
 
 const before = mocha.before
@@ -13,11 +13,11 @@ chai.should()
 
 const originEnv = {...process.env}
 
-afterEach(() => {
-    process.env = {...originEnv}
-})
-
 describe('env-options', function () {
+    afterEach(() => {
+        process.env = {...originEnv}
+    })
+    
     describe('no-env', function () {
         it('no-env', function (done) {
             const input = {}
