@@ -228,14 +228,25 @@ describe('dotenv-packed', function () {
             Object.assign(process.env, inputProcessEnv)
             const {get} = dotenvPacked.pack(useEnv(input))
 
-            // existing variable
+            // existent variable
             get('VARIABLE_1').should.equal(expected.VARIABLE_1)
             get('VARIABLE_2').should.equal(expected.VARIABLE_2)
-            get('VARIABLE_NULL', 'default null').should.equal('default null')
-            get('VARIABLE_EMPTY', 'default empty').should.equal('')
+            expect(get('VARIABLE_NULL')).to.be.a('null')
+            expect(get('VARIABLE_NULL', 'default null')).to.be.a('null')
+            expect(get('VARIABLE_UNDEFINED')).to.be.an('undefined')
+            expect(get('VARIABLE_UNDEFINED', 'default undefined')).to.be.an('undefined')
+            get('VARIABLE_BOOLEAN').should.equal(expected.VARIABLE_BOOLEAN)
+            get('VARIABLE_NUMBER').should.equal(expected.VARIABLE_NUMBER)
+            get('VARIABLE_BIGINT').should.equal(expected.VARIABLE_BIGINT)
+            get('VARIABLE_EMPTY').should.equal(expected.VARIABLE_EMPTY)
+            get('VARIABLE_EMPTY', 'default empty').should.equal(expected.VARIABLE_EMPTY)
+            get('VARIABLE_SYMBOL').should.be.a('symbol')
+            get('VARIABLE_SYMBOL').toString().should.equal(expectedVariableSymbol.toString())
+            get('VARIABLE_ARRAY').should.deep.equal(expected.VARIABLE_ARRAY)
+            get('VARIABLE_OBJECT').should.deep.equal(expected.VARIABLE_OBJECT)
             get('VARIABLE_100').should.equal(expectedProcessEnv.VARIABLE_100)
 
-            // none-existing variable
+            // non-existent variable
             expect(process.env.VARIABLE_3).to.be.an('undefined')
             expect(get('VARIABLE_3')).to.be.a('null')
             get('VARIABLE_3', 'default 3').should.equal('default 3')
@@ -314,8 +325,15 @@ describe('dotenv-packed', function () {
             get().VARIABLE_SYMBOL.should.be.a('symbol')
             get().VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
             // all with default values
-            get(null, {VARIABLE_1: 'default 1', VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'})
-                .should.deep.include(Object.assign({}, expectedAll, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
+            get(
+                null,
+                {
+                    VARIABLE_NULL: 'default null',
+                    VARIABLE_UNDEFINED: 'default undefined',
+                    VARIABLE_EMPTY: 'default empty',
+                    VARIABLE_3: 'default 3',
+                },
+            ).should.deep.include(Object.assign({}, expectedAll, {VARIABLE_3: 'default 3'}))
 
             done()
         })
@@ -372,28 +390,40 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_EMPTY: '',
             }
 
             Object.assign(process.env, inputProcessEnv)
             const {get} = dotenvPacked.pack(useEnv(input))
 
-            // only with existing variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL']).should.deep.equal(expectedOnly)
-            // only with existing variables and none-existing variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3']).should.deep.equal(
+            // only with existent variables
+            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY']).should.deep.equal(expectedOnly)
+            // only with existent variables and non-existent variables
+            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3']).should.deep.equal(
                 Object.assign({}, expectedOnly, {VARIABLE_3: null}),
             )
-            // only with existing variables and none-existing variables which have default values
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3'], {VARIABLE_3: 'default 3'}).should.deep.equal(
-                Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}),
-            )
-            // only with existing variables and none-existing variables which don't have default values
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3'], {}).should.deep.equal(
-                Object.assign({}, expectedOnly, {VARIABLE_3: null}),
-            )
-            // only with existing variables and none-existing variables which have default values 2
-            get({VARIABLE_1: 'default 1', VARIABLE_2: 'default 2', VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'})
-                .should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
+            // only with existent variables and non-existent variables which have default values
+            get(
+                ['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3'],
+                {
+                    VARIABLE_1: 'default 1',
+                    VARIABLE_2: 'default 2',
+                    VARIABLE_NULL: 'default null',
+                    VARIABLE_UNDEFINED: 'default undefined',
+                    VARIABLE_EMPTY: 'default empty',
+                    VARIABLE_3: 'default 3',
+                },
+            ).should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
+            // only with existent variables and non-existent variables which have default values 2
+            get({
+                VARIABLE_1: 'default 1',
+                VARIABLE_2: 'default 2',
+                VARIABLE_NULL: 'default null',
+                VARIABLE_UNDEFINED: 'default undefined',
+                VARIABLE_EMPTY: 'default empty',
+                VARIABLE_3: 'default 3',
+            }).should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
 
             done()
         })
@@ -543,14 +573,25 @@ describe('dotenv-packed', function () {
             Object.assign(process.env, inputProcessEnv)
             const {get} = useEnv()
 
-            // existing variable
+            // existent variable
             get('VARIABLE_1').should.equal(expected.VARIABLE_1)
             get('VARIABLE_2').should.equal(expected.VARIABLE_2)
-            get('VARIABLE_NULL', 'default null').should.equal('default null')
-            get('VARIABLE_EMPTY', 'default empty').should.equal('')
+            expect(get('VARIABLE_NULL')).to.be.a('null')
+            expect(get('VARIABLE_NULL', 'default null')).to.be.a('null')
+            expect(get('VARIABLE_UNDEFINED')).to.be.an('undefined')
+            expect(get('VARIABLE_UNDEFINED', 'default undefined')).to.be.an('undefined')
+            get('VARIABLE_BOOLEAN').should.equal(expected.VARIABLE_BOOLEAN)
+            get('VARIABLE_NUMBER').should.equal(expected.VARIABLE_NUMBER)
+            get('VARIABLE_BIGINT').should.equal(expected.VARIABLE_BIGINT)
+            get('VARIABLE_EMPTY').should.equal(expected.VARIABLE_EMPTY)
+            get('VARIABLE_EMPTY', 'default empty').should.equal(expected.VARIABLE_EMPTY)
+            get('VARIABLE_SYMBOL').should.be.a('symbol')
+            get('VARIABLE_SYMBOL').toString().should.equal(expectedVariableSymbol.toString())
+            get('VARIABLE_ARRAY').should.deep.equal(expected.VARIABLE_ARRAY)
+            get('VARIABLE_OBJECT').should.deep.equal(expected.VARIABLE_OBJECT)
             get('VARIABLE_100').should.equal(expectedProcessEnv.VARIABLE_100)
 
-            // none-existing variable
+            // non-existent variable
             expect(process.env.VARIABLE_3).to.be.an('undefined')
             expect(get('VARIABLE_3')).to.be.a('null')
             get('VARIABLE_3', 'default 3').should.equal('default 3')
@@ -615,8 +656,15 @@ describe('dotenv-packed', function () {
             get().VARIABLE_SYMBOL.should.be.a('symbol')
             get().VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
             // all with default values
-            get(null, {VARIABLE_1: 'default 1', VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'})
-                .should.deep.include(Object.assign({}, expectedAll, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
+            get(
+                null,
+                {
+                    VARIABLE_NULL: 'default null',
+                    VARIABLE_UNDEFINED: 'default undefined',
+                    VARIABLE_EMPTY: 'default empty',
+                    VARIABLE_3: 'default 3',
+                },
+            ).should.deep.include(Object.assign({}, expectedAll, {VARIABLE_3: 'default 3'}))
 
             done()
         })
@@ -659,28 +707,40 @@ describe('dotenv-packed', function () {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
                 VARIABLE_NULL: null,
+                VARIABLE_UNDEFINED: undefined,
+                VARIABLE_EMPTY: '',
             }
 
             Object.assign(process.env, inputProcessEnv)
             const {get} = useEnv()
 
-            // only with existing variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL']).should.deep.equal(expectedOnly)
-            // only with existing variables and none-existing variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3']).should.deep.equal(
+            // only with existent variables
+            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY']).should.deep.equal(expectedOnly)
+            // only with existent variables and non-existent variables
+            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3']).should.deep.equal(
                 Object.assign({}, expectedOnly, {VARIABLE_3: null}),
             )
-            // only with existing variables and none-existing variables which have default values
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3'], {VARIABLE_3: 'default 3'}).should.deep.equal(
-                Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}),
-            )
-            // only with existing variables and none-existing variables which don't have default values
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_3'], {}).should.deep.equal(
-                Object.assign({}, expectedOnly, {VARIABLE_3: null}),
-            )
-            // only with existing variables and none-existing variables which have default values 2
-            get({VARIABLE_1: 'default 1', VARIABLE_2: 'default 2', VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'})
-                .should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_NULL: 'default null', VARIABLE_3: 'default 3'}))
+            // only with existent variables and non-existent variables which have default values
+            get(
+                ['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3'],
+                {
+                    VARIABLE_1: 'default 1',
+                    VARIABLE_2: 'default 2',
+                    VARIABLE_NULL: 'default null',
+                    VARIABLE_UNDEFINED: 'default undefined',
+                    VARIABLE_EMPTY: 'default empty',
+                    VARIABLE_3: 'default 3',
+                },
+            ).should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
+            // only with existent variables and non-existent variables which have default values 2
+            get({
+                VARIABLE_1: 'default 1',
+                VARIABLE_2: 'default 2',
+                VARIABLE_NULL: 'default null',
+                VARIABLE_UNDEFINED: 'default undefined',
+                VARIABLE_EMPTY: 'default empty',
+                VARIABLE_3: 'default 3',
+            }).should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
 
             done()
         })

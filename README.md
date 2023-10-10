@@ -175,22 +175,22 @@ console.log(process.env.VARIABLE_3)     // (string) 'true'
 ## Preload
 
 You can use the `--require` (`-r`) [command line option](https://nodejs.org/api/cli.html#cli_r_require_module)
-to preload `dotenv-packed`. By doing this, you do not need to require and load 
+to preload `dotenv-packed`. By doing this, you do not need to require and load
 `dotenv-packed` in your application code.
 This is the preferred approach when using `import` instead of `require`.
-
-By default, `dotenv` is used to load .env file:
 
 ```bash
 $ node -r dotenv-packed/config your_script.js
 ```
 
-***Note:* See `dotenv`'s [Preload](https://www.npmjs.com/package/dotenv#preload) 
-for more supported command line arguments.
+By default, `dotenv` is used to load .env file. 
 
-You can have `dotenv-flow` load .env file based on the environment variable `NODE_ENV` 
-by using the command line argument `--use-flow` 
-or setting environment variable `DOTENV_PACKED_USE_FLOW`:
+***Note:* See `dotenv`'s [Preload](https://www.npmjs.com/package/dotenv#preload)
+for supported command line arguments while using `dotenv` as the loader.
+
+Instead of `dotenv`, you can have `dotenv-flow` load .env file based on the environment variable `NODE_ENV`
+by using the command line argument `--use-flow`
+or setting the environment variable `DOTENV_PACKED_USE_FLOW`:
 
 ```bash
 $ NODE_ENV=<value> node -r dotenv-packed/config your_script.js --use-flow
@@ -198,8 +198,8 @@ $ NODE_ENV=<value> node -r dotenv-packed/config your_script.js --use-flow
 $ NODE_ENV=<value> DOTENV_PACKED_USE_FLOW=true node -r dotenv-packed/config your_script.js
 ```
 
-Additionally, you can use the command line argument `--node-env` 
-instead of `NODE_ENV` as follows:
+Additionally, you can use the command line argument `--node-env`
+instead of the environment variable `NODE_ENV` as follows:
 
 ```bash
 $ node -r dotenv-packed/config your_script.js --use-flow --node-env <value>
@@ -286,10 +286,24 @@ The return value of `pack` function has two properties: `parsed` and `get`.
 `parsed` is an object of environment variables which have been parsed
 (loaded, then expanded and converted) from .env file.
 
+```dotenv
+# .env file
+VARIABLE_1="value 1"
+VARIABLE_2=null
+```
+
+```javascript
+// process.env
+process.env.DEBUG = 'true'
+```
+
 ```javascript
 const env = dotenvPacked.pack()
 
+// Only from .env file
 console.log(env.parsed) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: null}
+// Include variables parsed from .env file
+console.log(process.env) // (object) {..., DEBUG: 'true', VARIABLE_1: 'value 1', VARIABLE_2: 'null', ...}
 ```
 
 ##### Property `get`
@@ -297,38 +311,65 @@ console.log(env.parsed) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: null}
 `get` is a helper function to get values of environment variables
 which have been parsed from .env file or in `process.env`.
 
+The variables from .env file has a higher priority than ones in `process.env`:
+
+```javascript
+// if
+console.log(process.env.ONLY_PROCESS_ENV) // (string) 'only process.env'
+console.log(process.env.BOTH) // (string) 'from process.env'
+// and
+console.log(env.parsed.ONLY_PARSED) // (string) 'only parsed'
+console.log(env.parsed.BOTH) // (string) 'from parsed'
+
+// then
+console.log(env.get('ONLY_PROCESS_ENV')) // (string) 'only process.env'
+console.log(env.get('ONLY_PARSED')) // (string) 'only parsed'
+console.log(env.get('BOTH')) // (string) 'from parsed'
+```
+
+Usages:
+
 - Get value of a variable:
 
 ```javascript
 const env = dotenvPacked.pack()
 
-console.log(env.get('VARIABLE_1')) // (string) 'value 1'
-console.log(env.get('VARIABLE_2')) // (object) null
+// From .env file
+console.log(env.get('VARIABLE_1'))  // (string) 'value 1'
+console.log(env.get('VARIABLE_2'))  // (object) null
+// From process.env
+console.log(env.get('DEBUG'))       // (string) 'true'
+// Non-existent variable
+console.log(env.get('VARIABLE_3'))  // (object) null
 ```
 
-***Note:* If the variable is not set or set to null, the null value will be returned.
+***Note:* If the variable is non-existent, the null value will be returned.
 
-- Get value of a variable with its default value:
+- Get value of a variable with its default value 
+which is used as the value for the non-existent variable
 
 ```javascript
 const env = dotenvPacked.pack()
 
-console.log(env.get('VARIABLE_2', 'default value 2')) // (string) 'default value 2'
+// Existent variables
+console.log(env.get('VARIABLE_1', 'default 1'))  // (string) 'value 1'
+console.log(env.get('VARIABLE_2', 'default 2'))  // (object) null
+// Non-existent variable
+console.log(env.get('VARIABLE_3', 'default 3')) // (string) 'default 3'
 ```
-
-***Note:* The default value will be returned if the variable is not set or set to null.
 
 - Get values of a set of variables:
 
 ```javascript
 const env = dotenvPacked.pack()
 
-console.log(env.get(['VARIABLE_1', 'VARIABLE_2'])) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: null}
+console.log(env.get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_3'])) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: null, VARIABLE_3: null}
 ```
 
-***Note:* If any of variables is not set or set to null, the null value will be represented as its value.
+***Note:* If any of variables is non-existent, the null value will be represented as its value.
 
-- Get values of a set of variables with their default values:
+- Get values of a set of variables with their default values 
+which are used as the values for non-existent variables:
 
 ```javascript
 const env = dotenvPacked.pack()
@@ -337,20 +378,19 @@ const env = dotenvPacked.pack()
 console.log(
     env.get(
         // set of variables
-        ['VARIABLE_1', 'VARIABLE_2'],
+        ['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_3'],
         // default values
-        {VARIABLE_2: 'default value 2'}
+        {VARIABLE_3: 'default 3'}
     )
-) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: 'default value 2'}
+) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: null, VARIABLE_3: 'default 3'}
 
 // Or this:
 console.log(
     env.get({
         // set of variables + default values
-        VARIABLE_1: 'default value 1',
-        VARIABLE_2: 'default value 2',
+        VARIABLE_1: 'default 1',
+        VARIABLE_2: 'default 2',
+        VARIABLE_3: 'default 3',
     })
-) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: 'default value 2'}
+) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: null, VARIABLE_3: 'default 3'}
 ```
-
-***Note:* If any of variables is not set or set to null, the default value will be used as its value.

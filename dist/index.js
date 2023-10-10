@@ -21,6 +21,10 @@ function load(useFlow, options) {
   return result;
 }
 function createResult(parsed, options) {
+  var _hasOrDefault = function _hasOrDefault(obj, name, defaultValue) {
+    return name in obj ? obj[name] : defaultValue;
+  };
+
   /**
    * @var {object}
    */
@@ -40,8 +44,7 @@ function createResult(parsed, options) {
     var all = Object.assign({}, _memAll());
     if (defaultValues !== null) {
       Object.keys(defaultValues).forEach(function (name) {
-        var _all$name;
-        all[name] = (_all$name = all[name]) !== null && _all$name !== void 0 ? _all$name : defaultValues[name];
+        all[name] = _hasOrDefault(all, name, defaultValues[name]);
       });
     }
     return all;
@@ -60,17 +63,14 @@ function createResult(parsed, options) {
       var applyDefaultValue = defaultValues === null ? function () {
         return null;
       } : function (name) {
-        var _defaultValues$name;
-        return (_defaultValues$name = defaultValues[name]) !== null && _defaultValues$name !== void 0 ? _defaultValues$name : null;
+        return _hasOrDefault(defaultValues, name, null);
       };
       names.forEach(function (name) {
-        var _all$name2;
-        vars[name] = (_all$name2 = all[name]) !== null && _all$name2 !== void 0 ? _all$name2 : applyDefaultValue(name);
+        vars[name] = _hasOrDefault(all, name, applyDefaultValue(name));
       });
     } else {
       Object.keys(names).forEach(function (name) {
-        var _all$name3;
-        vars[name] = (_all$name3 = all[name]) !== null && _all$name3 !== void 0 ? _all$name3 : names[name];
+        vars[name] = _hasOrDefault(all, name, names[name]);
       });
     }
     return vars;
@@ -95,15 +95,7 @@ function createResult(parsed, options) {
       if (name instanceof Object && !(name instanceof String)) {
         return _getOnly(name, null);
       }
-      if (name in parsed) {
-        var _parsed$name;
-        return (_parsed$name = parsed[name]) !== null && _parsed$name !== void 0 ? _parsed$name : defaultValue;
-      }
-      if (!options.ignoreProcessEnv) {
-        var _process$env$name;
-        return (_process$env$name = process.env[name]) !== null && _process$env$name !== void 0 ? _process$env$name : defaultValue;
-      }
-      return defaultValue;
+      return _hasOrDefault(parsed, name, !options.ignoreProcessEnv ? _hasOrDefault(process.env, name, defaultValue) : defaultValue);
     }
   };
 }

@@ -18,26 +18,26 @@ function load(useFlow, options) {
 }
 
 function createResult(parsed, options) {
+    const _hasOrDefault = (obj, name, defaultValue) => name in obj ? obj[name] : defaultValue
+
     /**
      * @var {object}
      */
     let _all
 
-    const _memAll = function () {
-        return _all ?? (_all = Object.assign({}, process.env, parsed))
-    }
+    const _memAll = () => _all ?? (_all = Object.assign({}, process.env, parsed))
 
     /**
      *
      * @param {object|null} defaultValues
      * @returns {object}
      */
-    const _getAll = function (defaultValues) {
+    const _getAll = defaultValues => {
         // need to clone all
         const all = Object.assign({}, _memAll())
         if (defaultValues !== null) {
             Object.keys(defaultValues).forEach(name => {
-                all[name] = all[name] ?? defaultValues[name]
+                all[name] = _hasOrDefault(all, name, defaultValues[name])
             })
         }
         return all
@@ -49,21 +49,21 @@ function createResult(parsed, options) {
      * @param {object|null} defaultValues
      * @returns {object}
      */
-    const _getOnly = function (names, defaultValues) {
+    const _getOnly = (names, defaultValues) => {
         const all = _memAll()
 
         const vars = {}
         if (names instanceof Array) {
             const applyDefaultValue = defaultValues === null
                 ? () => null
-                : name => defaultValues[name] ?? null
+                : name => _hasOrDefault(defaultValues, name, null)
             names.forEach(name => {
-                vars[name] = all[name] ?? applyDefaultValue(name)
+                vars[name] = _hasOrDefault(all, name, applyDefaultValue(name))
             })
         }
         else {
             Object.keys(names).forEach(name => {
-                vars[name] = all[name] ?? names[name]
+                vars[name] = _hasOrDefault(all, name, names[name])
             })
         }
         return vars
@@ -87,13 +87,13 @@ function createResult(parsed, options) {
             if (name instanceof Object && !(name instanceof String)) {
                 return _getOnly(name, null)
             }
-            if (name in parsed) {
-                return parsed[name] ?? defaultValue
-            }
-            if (!options.ignoreProcessEnv) {
-                return process.env[name] ?? defaultValue
-            }
-            return defaultValue
+            return _hasOrDefault(
+                parsed,
+                name,
+                !options.ignoreProcessEnv
+                    ? _hasOrDefault(process.env, name, defaultValue)
+                    : defaultValue,
+            )
         },
     }
 }
