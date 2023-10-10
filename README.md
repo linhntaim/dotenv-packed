@@ -5,7 +5,7 @@
 [![Coveralls github](https://img.shields.io/coveralls/github/linhntaim/dotenv-packed?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-packed)
 [![NPM](https://img.shields.io/npm/l/dotenv-packed?style=flat-square)](https://github.com/linhntaim/dotenv-packed/blob/master/LICENSE)
 
-All-in-one pack to load environment variables from .env file, then expand and convert them.
+All-in-one pack to load environment variables from `.env` file, then expand and convert them.
 Powered by
 [`dotenv`](https://www.npmjs.com/package/dotenv)/[`dotenv-flow`](https://www.npmjs.com/package/dotenv-flow),
 [`dotenv-expand`](https://www.npmjs.com/package/dotenv-expand)
@@ -72,7 +72,7 @@ console.log(process.env.VARIABLE_2)     // (string) '100'
 console.log(process.env.VARIABLE_3)     // (string) 'true'
 ```
 
-- Use `dotenv` to load variables:
+- Use `dotenv` to load environment variables from `.env` file:
 
 ```dotenv
 # .env file
@@ -118,7 +118,7 @@ console.log(process.env.VARIABLE_2)     // (string) '100'
 console.log(process.env.VARIABLE_3)     // (string) 'true'
 ```
 
-- Use `dotenv-flow` to load variables:
+- Use `dotenv-flow` to load environment variables from `NODE_ENV`-specific `.env` file:
 
 ```dotenv
 # .env.test file
@@ -183,12 +183,12 @@ This is the preferred approach when using `import` instead of `require`.
 $ node -r dotenv-packed/config your_script.js
 ```
 
-By default, `dotenv` is used to load .env file. 
+By default, `dotenv` is used to load `.env` file.
 
 ***Note:* See `dotenv`'s [Preload](https://www.npmjs.com/package/dotenv#preload)
 for supported command line arguments while using `dotenv` as the loader.
 
-Instead of `dotenv`, you can have `dotenv-flow` load .env file based on the environment variable `NODE_ENV`
+Additionally, you can have `dotenv-flow` load `NODE_ENV`-specific `.env` file
 by using the command line argument `--use-flow`
 or setting the environment variable `DOTENV_PACKED_USE_FLOW`:
 
@@ -198,7 +198,7 @@ $ NODE_ENV=<value> node -r dotenv-packed/config your_script.js --use-flow
 $ NODE_ENV=<value> DOTENV_PACKED_USE_FLOW=true node -r dotenv-packed/config your_script.js
 ```
 
-Additionally, you can use the command line argument `--node-env`
+Or you can use the command line argument `--node-env`
 instead of the environment variable `NODE_ENV` as follows:
 
 ```bash
@@ -222,7 +222,7 @@ $ node -r dotenv-packed/config your_script.js --use-flow --node-env=<value>
 
 ### `pack`
 
-`pack` function will load environment variables from .env file and assign them to `process.env`,
+`pack` function will load environment variables from `.env` file and assign them to `process.env`,
 then expand and convert them.
 
 ```javascript
@@ -238,11 +238,20 @@ const env = dotenvPacked.pack(options)
 
 #### Options
 
+##### `parsed`
+
+*Type:* `boolean`.
+
+If this option is set, `dotenv-packed` will use its value
+as the source of environment variables instead of loading from `.env` file.
+
+If this option is set, `useFlow` option and `dotenvOptions` option will be ignored.
+
 ##### `useFlow`
 
 *Type:* `boolean`. *Default:* `false`.
 
-If this option is set to `false`, `dotenv` will be the loader for .env file.
+If this option is set to `false`, `dotenv` will be the loader for `.env` file.
 Otherwise, `dotenv-flow` will.
 
 ##### `dotenvOptions`
@@ -279,12 +288,12 @@ use the option in `dotenv-expand`'s options or `dotenv-conversion`'s options.
 
 #### Return Value
 
-The return value of `pack` function has two properties: `parsed` and `get`.
+The return value of the `pack` function has two properties: `parsed` and `get`.
 
 ##### Property `parsed`
 
 `parsed` is an object of environment variables which have been parsed
-(loaded, then expanded and converted) from .env file.
+(loaded, then expanded and converted) from `.env` file.
 
 ```dotenv
 # .env file
@@ -309,9 +318,9 @@ console.log(process.env) // (object) {..., DEBUG: 'true', VARIABLE_1: 'value 1',
 ##### Property `get`
 
 `get` is a helper function to get values of environment variables
-which have been parsed from .env file or in `process.env`.
+which have been parsed from `.env` file or in `process.env`.
 
-The variables from .env file has a higher priority than ones in `process.env`:
+The variables from `.env` file has a higher priority than ones in `process.env`:
 
 ```javascript
 // if
@@ -345,8 +354,8 @@ console.log(env.get('VARIABLE_3'))  // (object) null
 
 ***Note:* If the variable is non-existent, the null value will be returned.
 
-- Get value of a variable with its default value 
-which is used as the value for the non-existent variable
+- Get value of a variable with its default value
+  which is used as the value for the non-existent variable
 
 ```javascript
 const env = dotenvPacked.pack()
@@ -368,8 +377,8 @@ console.log(env.get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_3'])) // (object) {VA
 
 ***Note:* If any of variables is non-existent, the null value will be represented as its value.
 
-- Get values of a set of variables with their default values 
-which are used as the values for non-existent variables:
+- Get values of a set of variables with their default values
+  which are used as the values for non-existent variables:
 
 ```javascript
 const env = dotenvPacked.pack()
