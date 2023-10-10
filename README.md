@@ -403,3 +403,26 @@ console.log(
     })
 ) // (object) {VARIABLE_1: 'value 1', VARIABLE_2: null, VARIABLE_3: 'default 3'}
 ```
+
+- Get all variables (parsed from `.env` file, have the higher priority, and in `process.env`):
+
+```javascript
+const env = dotenvPacked.pack()
+
+// This:
+console.log(
+    env.get()
+) // (object) {..., DEBUG: 'true', VARIABLE_1: 'value 1', VARIABLE_2: null, ...}
+```
+
+- Get all variables with their default values
+  which are used as the values for non-existent variables:
+
+```javascript
+const env = dotenvPacked.pack()
+
+// This:
+console.log(
+    env.get(null, {VARIABLE_3: 'default 3'})
+) // (object) {..., DEBUG: 'true', VARIABLE_1: 'value 1', VARIABLE_2: null, VARIABLE_3: 'default 3', ...}
+```
