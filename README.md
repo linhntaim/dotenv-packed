@@ -240,7 +240,7 @@ const env = dotenvPacked.pack(options)
 
 ##### `parsed`
 
-*Type:* `boolean`.
+*Type:* `object`.
 
 If this option is set, `dotenv-packed` will use its value
 as the source of environment variables instead of loading from `.env` file.

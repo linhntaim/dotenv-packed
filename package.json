@@ -1,6 +1,6 @@
 {
     "name": "dotenv-packed",
-    "version": "2.0.1",
+    "version": "3.0.0",
     "description": "All-in-one pack to load environment variables from .env file, then expand and convert them. Powered by `dotenv`/`dotenv-flow`, `dotenv-expand` and `dotenv-conversion`.",
     "main": "dist/index.js",
     "exports": {
@@ -48,7 +48,7 @@
     "homepage": "https://github.com/linhntaim/dotenv-packed#readme",
     "dependencies": {
         "dotenv": "^16.3.1",
-        "dotenv-conversion": "^2.2.1",
+        "dotenv-conversion": "^3.0.0",
         "dotenv-expand": "^10.0.0",
         "dotenv-flow": "^4.0.0"
     },
