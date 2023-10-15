@@ -275,7 +275,7 @@ This option contains `dotenv-conversion`'s [options](https://www.npmjs.com/packa
 
 ##### `ignoreProcessEnv`
 
-Type: `boolean`.
+*Type:* `boolean`.
 
 If this option is set to `false`, the environment variables' values
 after expanding and converting will be written back to `process.env`.

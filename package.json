@@ -1,6 +1,6 @@
 {
     "name": "dotenv-packed",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "All-in-one pack to load environment variables from .env file, then expand and convert them. Powered by `dotenv`/`dotenv-flow`, `dotenv-expand` and `dotenv-conversion`.",
     "main": "dist/index.js",
     "exports": {
