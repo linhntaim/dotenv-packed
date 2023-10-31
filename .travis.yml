@@ -1,0 +1,11 @@
+os: linux
+dist: jammy
+language: node_js
+node_js:
+  - "node"
+if: tag IS present
+#install: npm ci
+#script: npm test
+after_success:
+  - cp .coveralls.yml.example .coveralls.yml
+  - npm run coverage
