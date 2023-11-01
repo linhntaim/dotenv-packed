@@ -43,5 +43,6 @@ babel.config.*
 nyc.config.js
 .coveralls.yml.example
 .travis.yml
+.github
 /tests
 /src

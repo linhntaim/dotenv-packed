@@ -1,7 +1,7 @@
-service_name: travis-ci
-service_job_id: $TRAVIS_JOB_ID
-service_build_url: $TRAVIS_BUILD_WEB_URL
-service_branch: $TRAVIS_BRANCH
-service_pull_request: $TRAVIS_PULL_REQUEST
+service_name: $CI_NAME
+service_job_id: $CI_JOB_ID
+service_build_url: $CI_BUILD_URL
+service_branch: $CI_BRANCH
+service_pull_request: $CI_PULL_REQUEST
 
 repo_token: $COVERALLS_REPO_TOKEN
