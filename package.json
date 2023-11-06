@@ -1,6 +1,6 @@
 {
     "name": "dotenv-packed",
-    "version": "3.0.1",
+    "version": "3.1.0",
     "description": "All-in-one pack to load environment variables from .env file, then expand and convert them. Powered by `dotenv`/`dotenv-flow`, `dotenv-expand` and `dotenv-conversion`.",
     "main": "dist/index.js",
     "exports": {
@@ -19,8 +19,11 @@
     "scripts": {
         "build": "babel ./src -d ./dist -D --delete-dir-on-start",
         "test": "nyc mocha ./tests --require @babel/register",
-        "coverage": "nyc report --reporter=text-lcov | coveralls",
-        "ready": "npm i && npm run build && npm test"
+        "test:report": "nyc report --reporter=text-lcov",
+        "test:publish": "npm run test:report | coveralls",
+        "ci": "npm i && npm run build && npm test",
+        "cia": "npm run ci && npm run test:publish",
+        "cd": "npm run ci && npm publish"
     },
     "repository": {
         "type": "git",
@@ -59,7 +62,7 @@
         "@babel/register": "^7.22.15",
         "babel-plugin-add-module-exports": "^1.0.4",
         "chai": "^4.3.10",
-        "coveralls": "^3.1.1",
+        "coveralls-next": "^4.2.0",
         "mocha": "^10.2.0",
         "nyc": "^15.1.0"
     }

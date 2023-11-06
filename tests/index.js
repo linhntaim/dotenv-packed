@@ -1,18 +1,25 @@
 import chai from 'chai'
-import dotenvPacked from '../dist'
 import fs from 'fs'
 import mocha from 'mocha'
+import dotenvPacked from '../src'
 
+// const before = mocha.after
+// const beforeEach = mocha.beforeEach
 const after = mocha.after
 const afterEach = mocha.afterEach
 const describe = mocha.describe
 const it = mocha.it
 const expect = chai.expect
-chai.should()
 
 const originEnv = {...process.env}
 
 describe('dotenv-packed', function () {
+    // before(() => {
+    // })
+    // beforeEach(() => {
+    // })
+    // after(() => {
+    // })
     afterEach(() => {
         process.env = {...originEnv}
     })
@@ -25,6 +32,7 @@ describe('dotenv-packed', function () {
         }
 
         it('parsed', function (done) {
+            // inputs
             const input = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -43,6 +51,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -73,6 +82,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {parsed, get} = dotenvPacked.pack(
                 Object.assign(
@@ -89,18 +99,20 @@ describe('dotenv-packed', function () {
                 ),
             )
 
-            parsed.should.deep.include(expected)
-            parsed.VARIABLE_SYMBOL.should.be.a('symbol')
-            parsed.VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
-            parsed.should.not.haveOwnProperty('CONVERSION')
-            process.env.should.deep.include(expectedProcessEnv)
-            process.env.should.not.haveOwnProperty('CONVERSION')
+            // asserts
+            expect(parsed).to.deep.include(expected)
+            expect(parsed.VARIABLE_SYMBOL).to.be.a('symbol')
+            expect(parsed.VARIABLE_SYMBOL.toString()).to.equal(expectedVariableSymbol.toString())
+            expect(parsed).to.not.haveOwnProperty('CONVERSION')
+            expect(process.env).to.deep.include(expectedProcessEnv)
+            expect(process.env).to.not.haveOwnProperty('CONVERSION')
             expect(get('VARIABLE_1000')).to.be.a('null')
 
             done()
         })
 
         it('parsed:ignore-process-env', function (done) {
+            // inputs
             const input = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -119,6 +131,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -137,6 +150,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {parsed, get} = dotenvPacked.pack(
                 Object.assign(
@@ -154,29 +168,31 @@ describe('dotenv-packed', function () {
                 ),
             )
 
-            parsed.should.deep.include(expected)
-            parsed.VARIABLE_SYMBOL.should.be.a('symbol')
-            parsed.VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
-            parsed.should.not.haveOwnProperty('CONVERSION')
-            process.env.should.deep.include(expectedProcessEnv)
-            process.env.should.not.haveOwnProperty('CONVERSION')
-            process.env.should.not.haveOwnProperty('VARIABLE_1')
-            process.env.should.not.haveOwnProperty('VARIABLE_2')
-            process.env.should.not.haveOwnProperty('VARIABLE_NULL')
-            process.env.should.not.haveOwnProperty('VARIABLE_UNDEFINED')
-            process.env.should.not.haveOwnProperty('VARIABLE_BOOLEAN')
-            process.env.should.not.haveOwnProperty('VARIABLE_NUMBER')
-            process.env.should.not.haveOwnProperty('VARIABLE_BIGINT')
-            process.env.should.not.haveOwnProperty('VARIABLE_EMPTY')
-            process.env.should.not.haveOwnProperty('VARIABLE_ARRAY')
-            process.env.should.not.haveOwnProperty('VARIABLE_OBJECT')
-            process.env.should.not.haveOwnProperty('VARIABLE_EXPAND')
+            // asserts
+            expect(parsed).to.deep.include(expected)
+            expect(parsed.VARIABLE_SYMBOL).to.be.a('symbol')
+            expect(parsed.VARIABLE_SYMBOL.toString()).to.equal(expectedVariableSymbol.toString())
+            expect(parsed).to.not.haveOwnProperty('CONVERSION')
+            expect(process.env).to.deep.include(expectedProcessEnv)
+            expect(process.env).to.not.haveOwnProperty('CONVERSION')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_1')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_2')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_NULL')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_UNDEFINED')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_BOOLEAN')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_NUMBER')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_BIGINT')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_EMPTY')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_ARRAY')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_OBJECT')
+            expect(process.env).to.not.haveOwnProperty('VARIABLE_EXPAND')
             expect(get('VARIABLE_1000')).to.be.a('null')
 
             done()
         })
 
         it('get a variable', function (done) {
+            // inputs
             const input = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -195,6 +211,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -225,36 +242,38 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {get} = dotenvPacked.pack(useEnv(input))
 
+            // asserts
             // existent variable
-            get('VARIABLE_1').should.equal(expected.VARIABLE_1)
-            get('VARIABLE_2').should.equal(expected.VARIABLE_2)
+            expect(get('VARIABLE_1')).to.equal(expected.VARIABLE_1)
+            expect(get('VARIABLE_2')).to.equal(expected.VARIABLE_2)
             expect(get('VARIABLE_NULL')).to.be.a('null')
             expect(get('VARIABLE_NULL', 'default null')).to.be.a('null')
             expect(get('VARIABLE_UNDEFINED')).to.be.an('undefined')
             expect(get('VARIABLE_UNDEFINED', 'default undefined')).to.be.an('undefined')
-            get('VARIABLE_BOOLEAN').should.equal(expected.VARIABLE_BOOLEAN)
-            get('VARIABLE_NUMBER').should.equal(expected.VARIABLE_NUMBER)
-            get('VARIABLE_BIGINT').should.equal(expected.VARIABLE_BIGINT)
-            get('VARIABLE_EMPTY').should.equal(expected.VARIABLE_EMPTY)
-            get('VARIABLE_EMPTY', 'default empty').should.equal(expected.VARIABLE_EMPTY)
-            get('VARIABLE_SYMBOL').should.be.a('symbol')
-            get('VARIABLE_SYMBOL').toString().should.equal(expectedVariableSymbol.toString())
-            get('VARIABLE_ARRAY').should.deep.equal(expected.VARIABLE_ARRAY)
-            get('VARIABLE_OBJECT').should.deep.equal(expected.VARIABLE_OBJECT)
-            get('VARIABLE_100').should.equal(expectedProcessEnv.VARIABLE_100)
-
+            expect(get('VARIABLE_BOOLEAN')).to.equal(expected.VARIABLE_BOOLEAN)
+            expect(get('VARIABLE_NUMBER')).to.equal(expected.VARIABLE_NUMBER)
+            expect(get('VARIABLE_BIGINT')).to.equal(expected.VARIABLE_BIGINT)
+            expect(get('VARIABLE_EMPTY')).to.equal(expected.VARIABLE_EMPTY)
+            expect(get('VARIABLE_EMPTY', 'default empty')).to.equal(expected.VARIABLE_EMPTY)
+            expect(get('VARIABLE_SYMBOL')).to.be.a('symbol')
+            expect(get('VARIABLE_SYMBOL').toString()).to.equal(expectedVariableSymbol.toString())
+            expect(get('VARIABLE_ARRAY')).to.deep.equal(expected.VARIABLE_ARRAY)
+            expect(get('VARIABLE_OBJECT')).to.deep.equal(expected.VARIABLE_OBJECT)
+            expect(get('VARIABLE_100')).to.equal(expectedProcessEnv.VARIABLE_100)
             // non-existent variable
             expect(process.env.VARIABLE_3).to.be.an('undefined')
             expect(get('VARIABLE_3')).to.be.a('null')
-            get('VARIABLE_3', 'default 3').should.equal('default 3')
+            get('VARIABLE_3', expect('default 3')).to.equal('default 3')
 
             done()
         })
 
         it('get all', function (done) {
+            // inputs
             const input = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -273,6 +292,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -317,28 +337,33 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {get} = dotenvPacked.pack(useEnv(input))
 
+            // asserts
             // all
-            get().should.deep.include(expectedAll)
-            get().VARIABLE_SYMBOL.should.be.a('symbol')
-            get().VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
+            expect(get()).to.deep.include(expectedAll)
+            expect(get().VARIABLE_SYMBOL).to.be.a('symbol')
+            expect(get().VARIABLE_SYMBOL.toString()).to.equal(expectedVariableSymbol.toString())
             // all with default values
-            get(
-                null,
-                {
-                    VARIABLE_NULL: 'default null',
-                    VARIABLE_UNDEFINED: 'default undefined',
-                    VARIABLE_EMPTY: 'default empty',
-                    VARIABLE_3: 'default 3',
-                },
-            ).should.deep.include(Object.assign({}, expectedAll, {VARIABLE_3: 'default 3'}))
+            expect(
+                get(
+                    null,
+                    {
+                        VARIABLE_NULL: 'default null',
+                        VARIABLE_UNDEFINED: 'default undefined',
+                        VARIABLE_EMPTY: 'default empty',
+                        VARIABLE_3: 'default 3',
+                    },
+                ),
+            ).to.deep.include(Object.assign({}, expectedAll, {VARIABLE_3: 'default 3'}))
 
             done()
         })
 
         it('get only', function (done) {
+            // inputs
             const input = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -357,6 +382,7 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -394,36 +420,42 @@ describe('dotenv-packed', function () {
                 VARIABLE_EMPTY: '',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {get} = dotenvPacked.pack(useEnv(input))
 
+            // asserts
             // only with existent variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY']).should.deep.equal(expectedOnly)
+            expect(get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY'])).to.deep.equal(expectedOnly)
             // only with existent variables and non-existent variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3']).should.deep.equal(
+            expect(get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3'])).to.deep.equal(
                 Object.assign({}, expectedOnly, {VARIABLE_3: null}),
             )
             // only with existent variables and non-existent variables which have default values
-            get(
-                ['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3'],
-                {
+            expect(
+                get(
+                    ['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3'],
+                    {
+                        VARIABLE_1: 'default 1',
+                        VARIABLE_2: 'default 2',
+                        VARIABLE_NULL: 'default null',
+                        VARIABLE_UNDEFINED: 'default undefined',
+                        VARIABLE_EMPTY: 'default empty',
+                        VARIABLE_3: 'default 3',
+                    },
+                ),
+            ).to.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
+            // only with existent variables and non-existent variables which have default values 2
+            expect(
+                get({
                     VARIABLE_1: 'default 1',
                     VARIABLE_2: 'default 2',
                     VARIABLE_NULL: 'default null',
                     VARIABLE_UNDEFINED: 'default undefined',
                     VARIABLE_EMPTY: 'default empty',
                     VARIABLE_3: 'default 3',
-                },
-            ).should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
-            // only with existent variables and non-existent variables which have default values 2
-            get({
-                VARIABLE_1: 'default 1',
-                VARIABLE_2: 'default 2',
-                VARIABLE_NULL: 'default null',
-                VARIABLE_UNDEFINED: 'default undefined',
-                VARIABLE_EMPTY: 'default empty',
-                VARIABLE_3: 'default 3',
-            }).should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
+                }),
+            ).to.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
 
             done()
         })
@@ -444,10 +476,12 @@ describe('dotenv-packed', function () {
         }
 
         it('parsed:error', function (done) {
+            // inputs
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -479,21 +513,25 @@ describe('dotenv-packed', function () {
             }
 
             try {
+                // executes
                 Object.assign(process.env, inputProcessEnv)
                 const {parsed} = useEnv(false)
             }
             catch (e) {
-                e.should.equal('Cannot load .env file')
+                // asserts
+                expect(e).to.equal('Cannot load .env file')
             }
 
             done()
         })
 
         it('parsed', function (done) {
+            // inputs
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -524,22 +562,26 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {parsed} = useEnv()
 
-            parsed.should.deep.include(expected)
-            parsed.VARIABLE_SYMBOL.should.be.a('symbol')
-            parsed.VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
-            process.env.should.deep.include(expectedProcessEnv)
+            // asserts
+            expect(parsed).to.deep.include(expected)
+            expect(parsed.VARIABLE_SYMBOL).to.be.a('symbol')
+            expect(parsed.VARIABLE_SYMBOL.toString()).to.equal(expectedVariableSymbol.toString())
+            expect(process.env).to.deep.include(expectedProcessEnv)
 
             done()
         })
 
         it('get a variable', function (done) {
+            // inputs
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -570,40 +612,43 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {get} = useEnv()
 
+            // asserts
             // existent variable
-            get('VARIABLE_1').should.equal(expected.VARIABLE_1)
-            get('VARIABLE_2').should.equal(expected.VARIABLE_2)
+            expect(get('VARIABLE_1')).to.equal(expected.VARIABLE_1)
+            expect(get('VARIABLE_2')).to.equal(expected.VARIABLE_2)
             expect(get('VARIABLE_NULL')).to.be.a('null')
             expect(get('VARIABLE_NULL', 'default null')).to.be.a('null')
             expect(get('VARIABLE_UNDEFINED')).to.be.an('undefined')
             expect(get('VARIABLE_UNDEFINED', 'default undefined')).to.be.an('undefined')
-            get('VARIABLE_BOOLEAN').should.equal(expected.VARIABLE_BOOLEAN)
-            get('VARIABLE_NUMBER').should.equal(expected.VARIABLE_NUMBER)
-            get('VARIABLE_BIGINT').should.equal(expected.VARIABLE_BIGINT)
-            get('VARIABLE_EMPTY').should.equal(expected.VARIABLE_EMPTY)
-            get('VARIABLE_EMPTY', 'default empty').should.equal(expected.VARIABLE_EMPTY)
-            get('VARIABLE_SYMBOL').should.be.a('symbol')
-            get('VARIABLE_SYMBOL').toString().should.equal(expectedVariableSymbol.toString())
-            get('VARIABLE_ARRAY').should.deep.equal(expected.VARIABLE_ARRAY)
-            get('VARIABLE_OBJECT').should.deep.equal(expected.VARIABLE_OBJECT)
-            get('VARIABLE_100').should.equal(expectedProcessEnv.VARIABLE_100)
-
+            expect(get('VARIABLE_BOOLEAN')).to.equal(expected.VARIABLE_BOOLEAN)
+            expect(get('VARIABLE_NUMBER')).to.equal(expected.VARIABLE_NUMBER)
+            expect(get('VARIABLE_BIGINT')).to.equal(expected.VARIABLE_BIGINT)
+            expect(get('VARIABLE_EMPTY')).to.equal(expected.VARIABLE_EMPTY)
+            expect(get('VARIABLE_EMPTY', 'default empty')).to.equal(expected.VARIABLE_EMPTY)
+            expect(get('VARIABLE_SYMBOL')).to.be.a('symbol')
+            expect(get('VARIABLE_SYMBOL').toString()).to.equal(expectedVariableSymbol.toString())
+            expect(get('VARIABLE_ARRAY')).to.deep.equal(expected.VARIABLE_ARRAY)
+            expect(get('VARIABLE_OBJECT')).to.deep.equal(expected.VARIABLE_OBJECT)
+            expect(get('VARIABLE_100')).to.equal(expectedProcessEnv.VARIABLE_100)
             // non-existent variable
             expect(process.env.VARIABLE_3).to.be.an('undefined')
             expect(get('VARIABLE_3')).to.be.a('null')
-            get('VARIABLE_3', 'default 3').should.equal('default 3')
+            get('VARIABLE_3', expect('default 3')).to.equal('default 3')
 
             done()
         })
 
         it('get all', function (done) {
+            // inputs
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -648,32 +693,38 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {get} = dotenvPacked.pack(useEnv())
 
+            // asserts
             // all
-            get().should.deep.include(expectedAll)
-            get().VARIABLE_SYMBOL.should.be.a('symbol')
-            get().VARIABLE_SYMBOL.toString().should.equal(expectedVariableSymbol.toString())
+            expect(get()).to.deep.include(expectedAll)
+            expect(get().VARIABLE_SYMBOL).to.be.a('symbol')
+            expect(get().VARIABLE_SYMBOL.toString()).to.equal(expectedVariableSymbol.toString())
             // all with default values
-            get(
-                null,
-                {
-                    VARIABLE_NULL: 'default null',
-                    VARIABLE_UNDEFINED: 'default undefined',
-                    VARIABLE_EMPTY: 'default empty',
-                    VARIABLE_3: 'default 3',
-                },
-            ).should.deep.include(Object.assign({}, expectedAll, {VARIABLE_3: 'default 3'}))
+            expect(
+                get(
+                    null,
+                    {
+                        VARIABLE_NULL: 'default null',
+                        VARIABLE_UNDEFINED: 'default undefined',
+                        VARIABLE_EMPTY: 'default empty',
+                        VARIABLE_3: 'default 3',
+                    },
+                ),
+            ).to.deep.include(Object.assign({}, expectedAll, {VARIABLE_3: 'default 3'}))
 
             done()
         })
 
         it('get only', function (done) {
+            // inputs
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -711,36 +762,42 @@ describe('dotenv-packed', function () {
                 VARIABLE_EMPTY: '',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {get} = useEnv()
 
+            // asserts
             // only with existent variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY']).should.deep.equal(expectedOnly)
+            expect(get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY'])).to.deep.equal(expectedOnly)
             // only with existent variables and non-existent variables
-            get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3']).should.deep.equal(
+            expect(get(['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3'])).to.deep.equal(
                 Object.assign({}, expectedOnly, {VARIABLE_3: null}),
             )
             // only with existent variables and non-existent variables which have default values
-            get(
-                ['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3'],
-                {
+            expect(
+                get(
+                    ['VARIABLE_1', 'VARIABLE_2', 'VARIABLE_NULL', 'VARIABLE_UNDEFINED', 'VARIABLE_EMPTY', 'VARIABLE_3'],
+                    {
+                        VARIABLE_1: 'default 1',
+                        VARIABLE_2: 'default 2',
+                        VARIABLE_NULL: 'default null',
+                        VARIABLE_UNDEFINED: 'default undefined',
+                        VARIABLE_EMPTY: 'default empty',
+                        VARIABLE_3: 'default 3',
+                    },
+                ),
+            ).to.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
+            // only with existent variables and non-existent variables which have default values 2
+            expect(
+                get({
                     VARIABLE_1: 'default 1',
                     VARIABLE_2: 'default 2',
                     VARIABLE_NULL: 'default null',
                     VARIABLE_UNDEFINED: 'default undefined',
                     VARIABLE_EMPTY: 'default empty',
                     VARIABLE_3: 'default 3',
-                },
-            ).should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
-            // only with existent variables and non-existent variables which have default values 2
-            get({
-                VARIABLE_1: 'default 1',
-                VARIABLE_2: 'default 2',
-                VARIABLE_NULL: 'default null',
-                VARIABLE_UNDEFINED: 'default undefined',
-                VARIABLE_EMPTY: 'default empty',
-                VARIABLE_3: 'default 3',
-            }).should.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
+                }),
+            ).to.deep.equal(Object.assign({}, expectedOnly, {VARIABLE_3: 'default 3'}))
 
             done()
         })
@@ -764,11 +821,13 @@ describe('dotenv-packed', function () {
         }
 
         it('flow:error', function (done) {
+            // inputs
             const input = 0
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -779,22 +838,26 @@ describe('dotenv-packed', function () {
             }
 
             try {
+                // executes
                 Object.assign(process.env, inputProcessEnv)
                 const {parsed} = useEnv(input)
             }
             catch (e) {
-                e.should.equal('Cannot load .env file')
+                // asserts
+                expect(e).to.equal('Cannot load .env file')
             }
 
             done()
         })
 
         it('flow:env', function (done) {
+            // inputs
             const input = 1
             const inputProcessEnv = {
                 VARIABLE_100: 'variable 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'variable 1',
                 VARIABLE_2: 'variable 2',
@@ -804,21 +867,25 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'variable 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {parsed} = useEnv(input)
 
-            parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedProcessEnv)
+            // asserts
+            expect(parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedProcessEnv)
 
             done()
         })
 
         it('flow:env.local', function (done) {
+            // inputs
             const input = 2
             const inputProcessEnv = {
                 VARIABLE_100: 'local 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'local 1',
                 VARIABLE_2: 'local 2',
@@ -828,22 +895,26 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'local 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {parsed} = useEnv(input)
 
-            parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedProcessEnv)
+            // asserts
+            expect(parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedProcessEnv)
 
             done()
         })
 
         it('flow:env.test', function (done) {
+            // inputs
             process.env.NODE_ENV = 'test'
             const input = 3
             const inputProcessEnv = {
                 VARIABLE_100: 'test 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'test 1',
                 VARIABLE_2: 'test 2',
@@ -853,22 +924,26 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'test 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {parsed} = useEnv(input)
 
-            parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedProcessEnv)
+            // asserts
+            expect(parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedProcessEnv)
 
             done()
         })
 
         it('flow:env.test.local', function (done) {
+            // inputs
             process.env.NODE_ENV = 'test'
             const input = 4
             const inputProcessEnv = {
                 VARIABLE_100: 'test local 100',
             }
 
+            // expected outputs
             const expected = {
                 VARIABLE_1: 'test local 1',
                 VARIABLE_2: 'test local 2',
@@ -878,11 +953,13 @@ describe('dotenv-packed', function () {
                 VARIABLE_100: 'test local 100',
             }
 
+            // executes
             Object.assign(process.env, inputProcessEnv)
             const {parsed} = useEnv(input)
 
-            parsed.should.deep.equal(expected)
-            process.env.should.deep.include(expectedProcessEnv)
+            // asserts
+            expect(parsed).to.deep.equal(expected)
+            expect(process.env).to.deep.include(expectedProcessEnv)
 
             done()
         })
