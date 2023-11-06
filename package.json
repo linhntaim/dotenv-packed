@@ -51,7 +51,7 @@
     "homepage": "https://github.com/linhntaim/dotenv-packed#readme",
     "dependencies": {
         "dotenv": "^16.3.1",
-        "dotenv-conversion": "^3.0.0",
+        "dotenv-conversion": "^3.1.0",
         "dotenv-expand": "^10.0.0",
         "dotenv-flow": "^4.0.0"
     },
