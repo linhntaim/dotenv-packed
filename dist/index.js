@@ -5,9 +5,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports["default"] = void 0;
 var _dotenv = _interopRequireDefault(require("dotenv"));
+var _dotenvConversion = _interopRequireDefault(require("dotenv-conversion"));
 var _dotenvExpand = _interopRequireDefault(require("dotenv-expand"));
 var _dotenvFlow = _interopRequireDefault(require("dotenv-flow"));
-var _dotenvConversion = _interopRequireDefault(require("dotenv-conversion"));
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 function load(useFlow, options) {
   if (useFlow) {

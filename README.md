@@ -1,9 +1,9 @@
 # dotenv-packed
 
 [![NPM version](https://img.shields.io/npm/v/dotenv-packed.svg?style=flat-square)](https://www.npmjs.com/package/dotenv-packed)
-[![Travis (.org)](https://img.shields.io/travis/com/linhntaim/dotenv-packed?style=flat-square)](https://app.travis-ci.com/github/linhntaim/dotenv-packed)
-[![Coveralls github](https://img.shields.io/coveralls/github/linhntaim/dotenv-packed?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-packed)
-[![NPM](https://img.shields.io/npm/l/dotenv-packed?style=flat-square)](https://github.com/linhntaim/dotenv-packed/blob/master/LICENSE)
+[![Github Actions](https://img.shields.io/github/actions/workflow/status/linhntaim/dotenv-packed/build.yml?style=flat-square)](https://github.com/linhntaim/dotenv-packed/actions/workflows/build.yml)
+[![Coveralls](https://img.shields.io/coveralls/github/linhntaim/dotenv-packed?style=flat-square)](https://coveralls.io/github/linhntaim/dotenv-packed)
+[![License](https://img.shields.io/npm/l/dotenv-packed?style=flat-square)](https://github.com/linhntaim/dotenv-packed/blob/master/LICENSE)
 
 All-in-one pack to load environment variables from `.env` file, then expand and convert them.
 Powered by

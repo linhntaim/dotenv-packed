@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
+import dotenvConversion from 'dotenv-conversion'
 import dotenvExpand from 'dotenv-expand'
 import dotenvFlow from 'dotenv-flow'
-import dotenvConversion from 'dotenv-conversion'
 
 function load(useFlow, options) {
     if (useFlow) {
